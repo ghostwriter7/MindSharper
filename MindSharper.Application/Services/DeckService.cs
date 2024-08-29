@@ -18,11 +18,11 @@ public class DeckService(IDeckRepository repository, ILogger<DeckService> logger
         return deckDto;
     }
 
-    public async Task<IEnumerable<DeckDto>> GetDecksAsync()
+    public async Task<IEnumerable<MinimalDeckDto>> GetDecksAsync()
     {
         logger.LogInformation($"Retrieving all {nameof(Deck)}");
         var decks = await repository.GetDecksAsync();
-        var deckDtos = mapper.Map<IEnumerable<DeckDto>>(decks);
+        var deckDtos = mapper.Map<IEnumerable<MinimalDeckDto>>(decks);
         return deckDtos;
     }
 

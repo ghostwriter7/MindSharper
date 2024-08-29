@@ -1,6 +1,6 @@
 @MindSharper.API_HostAddress = http://localhost:5273
 
-GET {{MindSharper.API_HostAddress}}/weatherforecast/
+GET {{MindSharper.API_HostAddress}}/api/decks/
 Accept: application/json
 
 ###

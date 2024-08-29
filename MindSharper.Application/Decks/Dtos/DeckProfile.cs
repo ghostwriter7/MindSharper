@@ -8,6 +8,7 @@ public class DeckProfile : Profile
     public DeckProfile()
     {
         CreateMap<Deck, DeckDto>();
-        CreateMap<CreateDeckDto, Deck>();   
+        CreateMap<Deck, MinimalDeckDto>();
+        CreateMap<CreateDeckDto, Deck>();
     }
 }

@@ -4,3 +4,8 @@ GET {{MindSharper.API_HostAddress}}/api/decks/
 Accept: application/json
 
 ###
+
+GET {{MindSharper.API_HostAddress}}/api/decks/1
+Accept: application/json
+
+###

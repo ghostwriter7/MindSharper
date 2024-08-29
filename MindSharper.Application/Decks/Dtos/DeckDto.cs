@@ -1,8 +1,9 @@
-﻿using MindSharper.Domain.Entities;
+﻿using MindSharper.Application.Flashcards.Dtos;
+using MindSharper.Domain.Entities;
 
 namespace MindSharper.Application.Decks.Dtos;
 
-public abstract class DeckDto : MinimalDeckDto
+public class DeckDto : MinimalDeckDto
 {
-    public IEnumerable<Flashcard> Flashcards { get; set; }
+    public IEnumerable<FlashcardDto> Flashcards { get; set; }
 }

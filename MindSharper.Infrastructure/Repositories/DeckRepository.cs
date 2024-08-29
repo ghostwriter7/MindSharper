@@ -9,7 +9,10 @@ internal class DeckRepository(MindSharperDatabaseContext context) : IDeckReposit
 {
     public async Task<Deck?> GetDeckByIdAsync(int deckId)
     {
-        var deck = await context.Decks.FindAsync(deckId);
+        var deck = await context.Decks
+            .Include(deck => deck.Flashcards)
+            .Where(deck => deck.Id == deckId)
+            .FirstOrDefaultAsync();
         return deck;
     }
 

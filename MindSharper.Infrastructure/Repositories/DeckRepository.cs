@@ -13,26 +13,26 @@ internal class DeckRepository(MindSharperDatabaseContext context) : IDeckReposit
         return deck;
     }
 
-    public async Task<IEnumerable<Deck>> GetDecks()
+    public async Task<IEnumerable<Deck>> GetDecksAsync()
     {
         var decks = await context.Decks.ToListAsync();
         return decks;
     }
 
-    public async Task<int> CreateDeck(Deck deck)
+    public async Task<int> CreateDeckAsync(Deck deck)
     {
         context.Decks.Add(deck);
         await context.SaveChangesAsync();
         return deck.Id;
     }
 
-    public async Task DeleteDeck(Deck deck)
+    public async Task DeleteDeckAsync(Deck deck)
     {
         context.Decks.Remove(deck);
         await context.SaveChangesAsync();
     }
 
-    public async Task UpdateDeck(Deck deck)
+    public async Task UpdateDeckAsync(Deck deck)
     {
         context.Decks.Update(deck);
         await context.SaveChangesAsync();

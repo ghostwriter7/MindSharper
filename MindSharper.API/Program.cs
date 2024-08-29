@@ -16,7 +16,7 @@ public class Program
         var app = builder.Build();
 
         var scope = app.Services.CreateScope();
-        var databaseSeeder = scope.ServiceProvider.GetService<IDatabaseSeeder>();
+        var databaseSeeder = scope.ServiceProvider.GetService<IDatabaseSeeder>()!;
         await databaseSeeder.Seed();
         
         app.UseHttpsRedirection();

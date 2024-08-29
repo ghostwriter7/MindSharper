@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MindSharper.Domain.Repositories;
 using MindSharper.Infrastructure.Persistance;
+using MindSharper.Infrastructure.Repositories;
 using MindSharper.Infrastructure.Seeders;
 
 namespace MindSharper.Infrastructure.Extensions;
@@ -16,5 +18,6 @@ public static class ServiceCollectionsExtensions
         });
 
         services.AddScoped<IDatabaseSeeder, DatabaseSeeder>();
+        services.AddScoped<IDeckRepository, DeckRepository>();
     }
 }

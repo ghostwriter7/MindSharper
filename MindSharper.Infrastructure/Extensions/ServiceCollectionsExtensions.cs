@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MindSharper.Infrastructure.Persistance;
+using MindSharper.Infrastructure.Seeders;
 
 namespace MindSharper.Infrastructure.Extensions;
 
@@ -13,5 +14,7 @@ public static class ServiceCollectionsExtensions
         {
             options.UseSqlServer(configuration.GetConnectionString("MindSharperDb"));
         });
+
+        services.AddScoped<IDatabaseSeeder, DatabaseSeeder>();
     }
 }

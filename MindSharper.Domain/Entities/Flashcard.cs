@@ -6,5 +6,6 @@ public class Flashcard
     public string Frontside { get; set; } = default!;
     public string Backside { get; set; } = default!;
     public DateOnly CreatedAt { get; set; } = default;
-    public DateTime? ReviewedAt { get; set; } 
+    public DateTime? ReviewedAt { get; set; }
+    public int DeckId { get; set; }
 }

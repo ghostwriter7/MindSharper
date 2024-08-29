@@ -2,6 +2,14 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MindSharper.Application\MindSharper.Application.csproj" />
+    <ProjectReference Include="..\MindSharper.Infrastructure\MindSharper.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <PropertyGroup>

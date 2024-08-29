@@ -1,15 +1,21 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using MindSharper.Domain.Entities;
 
 namespace MindSharper.Infrastructure.Persistance;
 
-internal class MindSharperDatabaseContext : DbContext
+internal class MindSharperDatabaseContext(DbContextOptions<MindSharperDatabaseContext> options) : DbContext(options)
 {
     internal DbSet<Deck> Decks { get; set; }
     internal DbSet<Flashcard> Flashcards { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        optionsBuilder.UseSqlServer("Server=localhost;Database=MindSharper;Trusted_Connection=True;Trust Server Certificate=true;");
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<Deck>()
+            .HasMany<Flashcard>(d => d.Flashcards)
+            .WithOne()
+            .HasForeignKey(f => f.DeckId);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
+using MindSharper.Application.Decks.Dtos;
 using MindSharper.Application.Services;
 using MindSharper.Domain.Entities;
 
@@ -12,25 +13,25 @@ public class DeckController(IDeckService deckService) : ControllerBase
     [HttpGet("{deckId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Deck?>> GetDeckById([FromRoute] int deckId)
+    public async Task<ActionResult<DeckDto?>> GetDeckById([FromRoute] int deckId)
     {
-        var deck = await deckService.GetDeckByIdAsync(deckId);
-        return Ok(deck);
+        var deckDto = await deckService.GetDeckByIdAsync(deckId);
+        return Ok(deckDto);
     }
 
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<Deck>>> GetDecks()
+    public async Task<ActionResult<IEnumerable<DeckDto>>> GetDecks()
     {
-        var decks = await deckService.GetDecksAsync();
-        return Ok(decks);
+        var deckDtos = await deckService.GetDecksAsync();
+        return Ok(deckDtos);
     }
 
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    public async Task<IActionResult> CreateDeck([FromBody] Deck deck)
+    public async Task<IActionResult> CreateDeck([FromBody] CreateDeckDto createDeckDto)
     {
-        var deckId = await deckService.CreateDeckAsync(deck);
+        var deckId = await deckService.CreateDeckAsync(createDeckDto);
         return CreatedAtAction(nameof(GetDeckById), new { id = deckId });
     }
 

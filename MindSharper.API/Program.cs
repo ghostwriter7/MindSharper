@@ -1,5 +1,6 @@
 using MindSharper.Infrastructure.Extensions;
 using MindSharper.Infrastructure.Seeders;
+using MindSharper.Application.Extensions;
 
 namespace MindSharper.API;
 
@@ -10,6 +11,7 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
         
         builder.Services.AddInfrastructure(builder.Configuration);
+        builder.Services.AddApplication();
         
         builder.Services.AddControllers();
 

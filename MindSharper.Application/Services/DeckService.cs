@@ -1,25 +1,29 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
+using MindSharper.Application.Decks.Dtos;
 using MindSharper.Domain.Entities;
 using MindSharper.Domain.Exceptions;
 using MindSharper.Domain.Repositories;
 
 namespace MindSharper.Application.Services;
 
-public class DeckService(IDeckRepository repository, ILogger<DeckService> logger) : IDeckService
+public class DeckService(IDeckRepository repository, ILogger<DeckService> logger, IMapper mapper) : IDeckService
 {
-    public async Task<Deck?> GetDeckByIdAsync(int deckId)
+    public async Task<DeckDto?> GetDeckByIdAsync(int deckId)
     {
         logger.LogInformation($"Retrieving {nameof(Deck)} by ID: {deckId}");
         var deck = await repository.GetDeckByIdAsync(deckId)
             ?? throw new NotFoundException(nameof(Deck), deckId.ToString());
-        return deck;
+        var deckDto = mapper.Map<DeckDto>(deck);
+        return deckDto;
     }
 
-    public async Task<IEnumerable<Deck>> GetDecksAsync()
+    public async Task<IEnumerable<DeckDto>> GetDecksAsync()
     {
         logger.LogInformation($"Retrieving all {nameof(Deck)}");
         var decks = await repository.GetDecksAsync();
-        return decks;
+        var deckDtos = mapper.Map<IEnumerable<DeckDto>>(decks);
+        return deckDtos;
     }
 
     public async Task DeleteDeckAsync(int deckId)
@@ -32,9 +36,10 @@ public class DeckService(IDeckRepository repository, ILogger<DeckService> logger
         logger.LogWarning($"{nameof(Deck)} ({deckId}) has been successfully deleted");
     }
 
-    public async Task<int> CreateDeckAsync(Deck deck)
+    public async Task<int> CreateDeckAsync(CreateDeckDto createDeckDto)
     {
         logger.LogInformation($"Creating a {nameof(Deck)}");
+        var deck = mapper.Map<Deck>(createDeckDto);
         var deckId = await repository.CreateDeckAsync(deck);
         return deckId;
     }

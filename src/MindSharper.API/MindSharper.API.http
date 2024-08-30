@@ -5,7 +5,7 @@ Accept: application/json
 
 ###
 
-GET {{MindSharper.API_HostAddress}}/api/decks/6
+GET {{MindSharper.API_HostAddress}}/api/decks/1
 Accept: application/json
 
 ###

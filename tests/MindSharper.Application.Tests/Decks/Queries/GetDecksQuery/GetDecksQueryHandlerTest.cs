@@ -30,7 +30,7 @@ public class GetDecksQueryHandlerTest
     }
 
     [Fact]
-    public async Task Handle_ForExistingResource_ShouldReturnDeckDto()
+    public async Task Handle_ForExistingDeckId_ShouldReturnDeckDto()
     {
         var deck = DeckFixtures.GetAnyDeck();
         var deckDto = DeckFixtures.GetDeckDtoFromDeck(deck);
@@ -44,13 +44,13 @@ public class GetDecksQueryHandlerTest
         var result = await _handler.Handle(query, CancellationToken.None);
 
         _deckRepositoryMock.Verify(repo => repo.GetDeckByIdAsync(query.DeckId), Times.Once);
-        _mapperMock.Verify(mapper => mapper.Map<DeckDto>(It.IsAny<Deck>()), Times.Once);
+        _mapperMock.Verify(mapper => mapper.Map<DeckDto>(deck), Times.Once);
         result.Should().NotBeNull();
         result.Should().BeEquivalentTo(deckDto);
     }
     
     [Fact]
-    public async Task Handle_ForNonExistingResource_ShouldThrowNotFoundException()
+    public async Task Handle_ForNonExistingDeckId_ShouldThrowNotFoundException()
     {
         var deckId = 1;
         var query = new GetDecksQuery() { DeckId = deckId };

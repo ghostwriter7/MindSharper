@@ -40,6 +40,7 @@ public class DeckService(IDeckRepository repository, ILogger<DeckService> logger
     {
         logger.LogInformation($"Creating a {nameof(Deck)}");
         var deck = mapper.Map<Deck>(createDeckDto);
+        deck.CreatedAt = DateOnly.FromDateTime(DateTime.Now);
         var deckId = await repository.CreateDeckAsync(deck);
         return deckId;
     }

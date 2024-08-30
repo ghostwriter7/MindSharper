@@ -10,5 +10,6 @@ public class DeckProfile : Profile
         CreateMap<Deck, DeckDto>();
         CreateMap<Deck, MinimalDeckDto>();
         CreateMap<CreateDeckDto, Deck>();
+        
     }
 }

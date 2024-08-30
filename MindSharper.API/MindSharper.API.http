@@ -16,3 +16,9 @@ Content-Type: application/json
 {
   "name": "PowerShell"
 }
+
+###
+DELETE {{MindSharper.API_HostAddress}}/api/decks/3
+
+###
+PATCH {{MindSharper.API_HostAddress}}/api/decks/6?name=NewName2

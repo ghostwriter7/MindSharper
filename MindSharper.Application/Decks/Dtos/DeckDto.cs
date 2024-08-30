@@ -5,5 +5,5 @@ namespace MindSharper.Application.Decks.Dtos;
 
 public class DeckDto : MinimalDeckDto
 {
-    public IEnumerable<FlashcardDto> Flashcards { get; set; }
+    public IEnumerable<FlashcardDto> Flashcards { get; set; } = [];
 }

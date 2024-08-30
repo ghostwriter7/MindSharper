@@ -32,7 +32,7 @@ public class DeckController(IDeckService deckService) : ControllerBase
     public async Task<IActionResult> CreateDeck([FromBody] CreateDeckDto createDeckDto)
     {
         var deckId = await deckService.CreateDeckAsync(createDeckDto);
-        return CreatedAtAction(nameof(GetDeckById), new { id = deckId });
+        return CreatedAtAction(nameof(GetDeckById), new { deckId }, null);
     }
 
     [HttpPatch("{deckId:int}")]

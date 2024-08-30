@@ -5,7 +5,14 @@ Accept: application/json
 
 ###
 
-GET {{MindSharper.API_HostAddress}}/api/decks/1
+GET {{MindSharper.API_HostAddress}}/api/decks/6
 Accept: application/json
 
 ###
+
+POST {{ MindSharper.API_HostAddress}}/api/decks
+Content-Type: application/json
+
+{
+  "name": "PowerShell"
+}

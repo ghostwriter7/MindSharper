@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MindSharper.API\MindSharper.API.csproj" />
+    <ProjectReference Include="..\..\src\MindSharper.API\MindSharper.API.csproj" />
   </ItemGroup>
   
 </Project>

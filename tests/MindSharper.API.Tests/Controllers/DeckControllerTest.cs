@@ -1,11 +1,16 @@
 ﻿using System;
+using System.Data.Common;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using FluentAssertions;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using MindSharper.API.Controllers;
@@ -22,7 +27,8 @@ public class DeckControllerTest : IClassFixture<WebApplicationFactory<Program>>
 {
     private readonly WebApplicationFactory<Program> _webApplicationFactory;
     private readonly Mock<IDeckRepository> _deckRepositoryMock = new();
-
+    private HttpClient _client;
+    
     public DeckControllerTest(WebApplicationFactory<Program> webApplicationFactory)
     {
         _webApplicationFactory = webApplicationFactory.WithWebHostBuilder(builder =>
@@ -33,39 +39,113 @@ public class DeckControllerTest : IClassFixture<WebApplicationFactory<Program>>
                     _ => _deckRepositoryMock.Object));
             });
         });
+        _client = _webApplicationFactory.CreateClient();
     }
 
 
     [Fact]
     public async Task GetDeckById_ForValidRequest_ShouldReturn200Ok()
     {
-        var client = _webApplicationFactory.CreateClient();
         var deck = new Deck()
         {
+            Id = 1,
             Name = "C#",
             CreatedAt = new DateOnly(2024, 7, 7),
             Flashcards = [],
             Rate = 3
         };
-        _deckRepositoryMock.Setup(repo => repo.GetDeckByIdAsync(1)).ReturnsAsync(deck);
+        _deckRepositoryMock.Setup(repo => repo.GetDeckByIdAsync(deck.Id)).ReturnsAsync(deck);
 
-        var result = await client.GetAsync("api/decks/1");
+        var result = await _client.GetAsync($"api/decks/{deck.Id}");
         var content = await result.Content.ReadFromJsonAsync<DeckDto>();
-        
+
         result.StatusCode.Should().Be(HttpStatusCode.OK);
-        content.Flashcards.Should().BeEmpty();
-        content.Name.Should().Be(deck.Name);
-        content.CreatedAt.Should().Be(deck.CreatedAt);
-        content.Rate.Should().Be(deck.Rate);
+        content.Should().NotBeNull();
+        content.Should().BeEquivalentTo(new DeckDto()
+        {
+            Name = deck.Name,
+            CreatedAt = deck.CreatedAt,
+            Flashcards = [],
+            Rate = deck.Rate,
+            Id = deck.Id
+        });
     }
 
     [Fact]
     public async Task GetDeckById_ForNonExistingResource_ShouldReturn404NotFound()
     {
-        var client = _webApplicationFactory.CreateClient();
         _deckRepositoryMock.Setup(repo => repo.GetDeckByIdAsync(1)).ReturnsAsync((Deck)null);
 
-        var result = await client.GetAsync("api/decks/1");
+        var result = await _client.GetAsync("api/decks/1");
+
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task GetDecks_ForValidRequest_ShouldReturn200Ok()
+    {
+        _deckRepositoryMock.Setup(repo => repo.GetDecksAsync()).ReturnsAsync([]);
+
+        var result = await _client.GetAsync("api/decks");
+
+        result.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task CreateDeck_ForValidRequest_ShouldReturn201Created()
+    {
+        var deckId = 100;
+        _deckRepositoryMock.Setup(repo => repo.CreateDeckAsync(It.IsAny<Deck>()))
+            .ReturnsAsync(deckId);
+
+        var result = await _client.PostAsync("api/decks", JsonContent.Create(new CreateDeckDto() { Name = "C#" }));
+
+        result.StatusCode.Should().Be(HttpStatusCode.Created);
+        result.Headers.Location.PathAndQuery.Should().Be($"/api/decks/{deckId}");
+    }
+
+    [Fact]
+    public async Task CreateDeck_ForNullName_ShouldReturn400BadRequest()
+    {
+        var result = await _client.PostAsync("api/decks", JsonContent.Create(new CreateDeckDto()));
+
+        result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+    
+    [Fact]
+    public async Task CreateDeck_ForExistingResourceWithTheSameName_ShouldReturn400BadRequest()
+    {
+        var dbExceptionMock = new Mock<DbException>();
+        dbExceptionMock.Setup(ex => ex.Message).Returns("duplicate key");
+
+        _deckRepositoryMock.Setup(repo => repo.CreateDeckAsync(It.IsAny<Deck>()))
+            .Throws(() => new Exception(null, dbExceptionMock.Object));
+
+        var result = await _client.PostAsync("api/decks", JsonContent.Create(new CreateDeckDto() { Name = "C#" }));
+
+        result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task DeleteDeck_ForExistingResource_ShouldReturn204NoContet()
+    {
+        var deckId = 100;
+        _deckRepositoryMock.Setup(repo => repo.GetDeckByIdAsync(deckId))
+            .ReturnsAsync(new Deck() { Id = deckId });
+
+        var result = await _client.DeleteAsync($"api/decks/{deckId}");
+
+        result.StatusCode.Should().Be(HttpStatusCode.NoContent);
+    }
+    
+    [Fact]
+    public async Task DeleteDeck_ForNonExistingResource_ShouldReturn404NotFound()
+    {
+        var deckId = 100;
+        _deckRepositoryMock.Setup(repo => repo.GetDeckByIdAsync(deckId))
+            .ReturnsAsync((Deck) null);
+
+        var result = await _client.DeleteAsync($"api/decks/{deckId}");
 
         result.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }

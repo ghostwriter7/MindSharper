@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MindSharper.Domain", "MindS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MindSharper.Application", "MindSharper.Application\MindSharper.Application.csproj", "{4646AE47-0962-48E8-AECF-8C9DB4E5E4BD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MindSharper.API.Tests", "MindSharper.API.Tests\MindSharper.API.Tests.csproj", "{52ED2D18-2EFF-4C9E-B4F7-5D5D1B0D3E83}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{4646AE47-0962-48E8-AECF-8C9DB4E5E4BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4646AE47-0962-48E8-AECF-8C9DB4E5E4BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4646AE47-0962-48E8-AECF-8C9DB4E5E4BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52ED2D18-2EFF-4C9E-B4F7-5D5D1B0D3E83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52ED2D18-2EFF-4C9E-B4F7-5D5D1B0D3E83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52ED2D18-2EFF-4C9E-B4F7-5D5D1B0D3E83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52ED2D18-2EFF-4C9E-B4F7-5D5D1B0D3E83}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

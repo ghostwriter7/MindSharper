@@ -10,6 +10,12 @@ public class ErrorHandlingMiddleware(ILogger<ErrorHandlingMiddleware> logger) : 
         {
             await next(context);
         }
+        catch (DuplicateResourceException duplicateResourceException)
+        {
+            logger.LogWarning(duplicateResourceException.Message);
+            context.Response.StatusCode = 400;
+            await context.Response.WriteAsync(duplicateResourceException.Message);
+        }
         catch (NotFoundException notFoundException)
         {
             logger.LogWarning(notFoundException.Message);

@@ -2,7 +2,7 @@
 
 namespace MindSharper.Domain.Repositories;
 
-public interface IDeckRepository
+public interface IDeckRepository : IBaseRepository
 {
     Task<Deck?> GetDeckByIdAsync(int deckId);
     Task<IEnumerable<Deck>> GetDecksAsync();

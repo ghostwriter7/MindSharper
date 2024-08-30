@@ -5,7 +5,7 @@ using MindSharper.Infrastructure.Persistance;
 
 namespace MindSharper.Infrastructure.Repositories;
 
-internal class DeckRepository(MindSharperDatabaseContext context) : IDeckRepository
+internal class DeckRepository(MindSharperDatabaseContext context) : BaseRepository(context), IDeckRepository
 {
     public async Task<Deck?> GetDeckByIdAsync(int deckId)
     {

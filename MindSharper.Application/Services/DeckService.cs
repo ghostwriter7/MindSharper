@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using System.Data.Common;
+using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using MindSharper.Application.Decks.Dtos;
 using MindSharper.Domain.Entities;
@@ -41,8 +43,16 @@ public class DeckService(IDeckRepository repository, ILogger<DeckService> logger
         logger.LogInformation($"Creating a {nameof(Deck)}");
         var deck = mapper.Map<Deck>(createDeckDto);
         deck.CreatedAt = DateOnly.FromDateTime(DateTime.Now);
-        var deckId = await repository.CreateDeckAsync(deck);
-        return deckId;
+
+        try
+        {
+            var deckId = await repository.CreateDeckAsync(deck);
+            return deckId;
+        }
+        catch (Exception exception) when (IsUniqueConstraintViolationException(exception))
+        {
+            throw new DuplicateResourceException(nameof(Deck), nameof(Deck.Name), deck.Name);
+        }
     }
 
     public async Task UpdateDeckNameAsync(int deckId, string name)
@@ -53,5 +63,11 @@ public class DeckService(IDeckRepository repository, ILogger<DeckService> logger
 
         deck.Name = name;
         await repository.UpdateDeckAsync(deck);
+    }
+
+    private bool IsUniqueConstraintViolationException(Exception exception)
+    {
+        return exception.InnerException is DbException innerException &&
+               innerException.Message.Contains("duplicate key");
     }
 }

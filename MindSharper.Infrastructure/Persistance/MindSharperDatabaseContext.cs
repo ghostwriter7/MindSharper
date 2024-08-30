@@ -17,5 +17,9 @@ internal class MindSharperDatabaseContext(DbContextOptions<MindSharperDatabaseCo
             .HasMany<Flashcard>(d => d.Flashcards)
             .WithOne()
             .HasForeignKey(f => f.DeckId);
+
+        modelBuilder.Entity<Deck>()
+            .HasIndex(deck => deck.Name)
+            .IsUnique();
     }
 }

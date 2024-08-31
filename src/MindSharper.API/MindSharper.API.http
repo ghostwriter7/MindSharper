@@ -28,3 +28,6 @@ Content-Type: application/json
   "name": "C#",
   "deckId": 1
 }
+
+###
+GET {{MindSharper.API_HostAddress}}/api/decks/2/flashcards

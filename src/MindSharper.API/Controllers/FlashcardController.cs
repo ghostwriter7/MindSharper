@@ -28,7 +28,7 @@ public class FlashcardController(IMediator mediator) : ControllerBase
         return Ok(results);
     }
 
-    [HttpDelete("{flashcardId:int")]
+    [HttpDelete("{flashcardId:int}")]
     public async Task<IActionResult> DeleteFlashcard([FromRoute] int deckId, [FromRoute] int flashcardId)
     {
         throw new NotImplementedException();

@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using MindSharper.Application.Flashcards.Commands.CreateFlashcard;
 using MindSharper.Application.Flashcards.Dtos;
 using MindSharper.Application.Flashcards.Queries.GetFlashcardById;
 using MindSharper.Application.Flashcards.Queries.GetFlashcards;
@@ -11,9 +12,13 @@ namespace MindSharper.API.Controllers;
 public class FlashcardController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
-    public async Task<ActionResult<int>> CreateFlashcard([FromRoute] int deckId)
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<int>> CreateFlashcard([FromRoute] int deckId, [FromBody] CreateFlashcardCommand command)
     {
-        throw new NotImplementedException();
+        command.DeckId = deckId;
+        var flashcardId = await mediator.Send(command);
+        return CreatedAtAction(nameof(GetFlashcardById), new { deckId, flashcardId }, null);
     }
 
     [HttpGet("{flashcardId:int}")]

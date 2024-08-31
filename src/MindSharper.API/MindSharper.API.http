@@ -33,4 +33,13 @@ Content-Type: application/json
 GET {{MindSharper.API_HostAddress}}/api/decks/2/flashcards
 
 ### 
-GET {{MindSharper.API_HostAddress}}/api/decks/1/flashcards/-1
+GET {{MindSharper.API_HostAddress}}/api/decks/1/flashcards/1
+
+###
+POST {{ MindSharper.API_HostAddress}}/api/decks/1/flashcards
+Content-Type: application/json
+
+{
+  "frontside": "Explain keyword 'in'",
+  "backside": "1. pass valuetypes by reference (e.g. structs) 2. reference is readonly"
+}

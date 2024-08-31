@@ -19,5 +19,6 @@ public static class ServiceCollectionsExtensions
 
         services.AddScoped<IDatabaseSeeder, DatabaseSeeder>();
         services.AddScoped<IDeckRepository, DeckRepository>();
+        services.AddScoped<IFlashcardRepository, FlashcardRepository>();
     }
 }

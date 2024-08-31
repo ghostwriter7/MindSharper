@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using MindSharper.Application.Decks.Dtos;
-using MindSharper.Application.Decks.Queries.GetDecksQuery;
+using MindSharper.Application.Decks.Queries.GetDeckByIdQuery;
 using MindSharper.Application.Services;
 using MindSharper.Domain.Entities;
 
@@ -17,7 +17,7 @@ public class DeckController(IDeckService deckService, IMediator mediator) : Cont
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<DeckDto?>> GetDeckById([FromRoute] int deckId)
     {
-        var deckDto = await mediator.Send(new GetDecksQuery() { DeckId = deckId });
+        var deckDto = await mediator.Send(new GetDeckByIdQuery() { DeckId = deckId });
         return Ok(deckDto);
     }
 

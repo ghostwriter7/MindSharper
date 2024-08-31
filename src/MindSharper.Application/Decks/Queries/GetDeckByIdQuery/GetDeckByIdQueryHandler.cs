@@ -6,11 +6,11 @@ using MindSharper.Domain.Entities;
 using MindSharper.Domain.Exceptions;
 using MindSharper.Domain.Repositories;
 
-namespace MindSharper.Application.Decks.Queries.GetDecksQuery;
+namespace MindSharper.Application.Decks.Queries.GetDeckByIdQuery;
 
-public class GetDecksQueryHandler(ILogger<GetDecksQueryHandler> logger, IDeckRepository deckRepository, IMapper mapper) : IRequestHandler<GetDecksQuery, DeckDto>
+public class GetDeckByIdQueryHandler(ILogger<GetDeckByIdQueryHandler> logger, IDeckRepository deckRepository, IMapper mapper) : IRequestHandler<GetDeckByIdQuery, DeckDto>
 {
-    public async Task<DeckDto> Handle(GetDecksQuery request, CancellationToken cancellationToken)
+    public async Task<DeckDto> Handle(GetDeckByIdQuery request, CancellationToken cancellationToken)
     {
         logger.LogInformation($"Retrieving {nameof(Deck)} by ID: {request.DeckId}");
         var deck = await deckRepository.GetDeckByIdAsync(request.DeckId)

@@ -6,7 +6,7 @@ using FluentAssertions;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 using MindSharper.Application.Decks.Dtos;
-using MindSharper.Application.Decks.Queries.GetDecksQuery;
+using MindSharper.Application.Decks.Queries.GetDeckByIdQuery;
 using MindSharper.Application.Tests.Fixtures;
 using MindSharper.Domain.Entities;
 using MindSharper.Domain.Exceptions;
@@ -14,19 +14,19 @@ using MindSharper.Domain.Repositories;
 using Moq;
 using Xunit;
 
-namespace MindSharper.Application.Tests.Decks.Queries.GetDecks;
+namespace MindSharper.Application.Tests.Decks.Queries.GetDeckById;
 
-[TestSubject(typeof(GetDecksQueryHandler))]
-public class GetDecksQueryHandlerTest
+[TestSubject(typeof(GetDeckByIdQueryHandler))]
+public class GetDeckByIdQueryHandlerTest
 {
-    private readonly Mock<ILogger<GetDecksQueryHandler>> _loggerMock = new();
+    private readonly Mock<ILogger<GetDeckByIdQueryHandler>> _loggerMock = new();
     private readonly Mock<IDeckRepository> _deckRepositoryMock = new();
     private readonly Mock<IMapper> _mapperMock = new();
-    private readonly GetDecksQueryHandler _handler;
+    private readonly GetDeckByIdQueryHandler _handler;
     
-    public GetDecksQueryHandlerTest()
+    public GetDeckByIdQueryHandlerTest()
     {
-        _handler = new GetDecksQueryHandler(_loggerMock.Object, _deckRepositoryMock.Object, _mapperMock.Object);
+        _handler = new GetDeckByIdQueryHandler(_loggerMock.Object, _deckRepositoryMock.Object, _mapperMock.Object);
     }
 
     [Fact]
@@ -34,7 +34,7 @@ public class GetDecksQueryHandlerTest
     {
         var deck = DeckFixtures.GetAnyDeck();
         var deckDto = DeckFixtures.GetDeckDtoFromDeck(deck);
-        var query = new GetDecksQuery() { DeckId = deck.Id };
+        var query = new GetDeckByIdQuery() { DeckId = deck.Id };
         
         _deckRepositoryMock.Setup(repo => repo.GetDeckByIdAsync(query.DeckId))
             .ReturnsAsync(deck);
@@ -53,7 +53,7 @@ public class GetDecksQueryHandlerTest
     public async Task Handle_ForNonExistingDeckId_ShouldThrowNotFoundException()
     {
         var deckId = 1;
-        var query = new GetDecksQuery() { DeckId = deckId };
+        var query = new GetDeckByIdQuery() { DeckId = deckId };
         
         _deckRepositoryMock.Setup(repo => repo.GetDeckByIdAsync(deckId))
             .ReturnsAsync((Deck) null);

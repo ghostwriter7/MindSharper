@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using MindSharper.Application.Flashcards.Commands.CreateFlashcard;
+using MindSharper.Application.Flashcards.Commands.DeleteFlashcard;
 using MindSharper.Application.Flashcards.Dtos;
 using MindSharper.Application.Flashcards.Queries.GetFlashcardById;
 using MindSharper.Application.Flashcards.Queries.GetFlashcards;
@@ -40,9 +41,12 @@ public class FlashcardController(IMediator mediator) : ControllerBase
     }
 
     [HttpDelete("{flashcardId:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteFlashcard([FromRoute] int deckId, [FromRoute] int flashcardId)
     {
-        throw new NotImplementedException();
+        await mediator.Send(new DeleteFlashcardCommand(deckId, flashcardId));
+        return NoContent();
     }
 
     [HttpPatch]

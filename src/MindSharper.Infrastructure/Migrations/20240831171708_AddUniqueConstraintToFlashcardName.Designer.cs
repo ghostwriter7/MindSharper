@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MindSharper.Infrastructure.Persistance;
 
@@ -11,9 +12,11 @@ using MindSharper.Infrastructure.Persistance;
 namespace MindSharper.Infrastructure.Migrations
 {
     [DbContext(typeof(MindSharperDatabaseContext))]
-    partial class MindSharperDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240831171708_AddUniqueConstraintToFlashcardName")]
+    partial class AddUniqueConstraintToFlashcardName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

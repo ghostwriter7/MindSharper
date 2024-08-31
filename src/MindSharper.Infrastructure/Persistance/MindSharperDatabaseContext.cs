@@ -21,5 +21,9 @@ internal class MindSharperDatabaseContext(DbContextOptions<MindSharperDatabaseCo
         modelBuilder.Entity<Deck>()
             .HasIndex(deck => deck.Name)
             .IsUnique();
+
+        modelBuilder.Entity<Flashcard>()
+            .HasIndex(flashcard => new { flashcard.DeckId, flashcard.Frontside })
+            .IsUnique();
     }
 }

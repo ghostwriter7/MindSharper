@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MindSharper.Application.Decks.Commands.CreateDeck;
 using MindSharper.Domain.Entities;
 
 namespace MindSharper.Application.Decks.Dtos;
@@ -9,7 +10,7 @@ public class DeckProfile : Profile
     {
         CreateMap<Deck, DeckDto>();
         CreateMap<Deck, MinimalDeckDto>();
-        CreateMap<CreateDeckDto, Deck>();
+        CreateMap<CreateDeckCommand, Deck>();
         
     }
 }

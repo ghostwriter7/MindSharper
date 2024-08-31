@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
+using MindSharper.Application.Decks.Commands.CreateDeck;
 using MindSharper.Application.Decks.Dtos;
 using MindSharper.Application.Decks.Queries.GetDeckByIdQuery;
 using MindSharper.Application.Decks.Queries.GetDecks;
@@ -33,9 +34,9 @@ public class DeckController(IDeckService deckService, IMediator mediator) : Cont
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> CreateDeck([FromBody] CreateDeckDto createDeckDto)
+    public async Task<IActionResult> CreateDeck([FromBody] CreateDeckCommand command)
     {
-        var deckId = await deckService.CreateDeckAsync(createDeckDto);
+        var deckId = await mediator.Send(command);
         return CreatedAtAction(nameof(GetDeckById), new { deckId }, null);
     }
 

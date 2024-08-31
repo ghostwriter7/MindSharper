@@ -29,4 +29,15 @@ public class DeckFixtures
             Rate = deck.Rate
         };
     }
+    
+    public static MinimalDeckDto GetMinimalDeckDtoFromDeck(Deck deck)
+    {
+        return new()
+        {
+            Id = deck.Id,
+            Name = deck.Name,
+            CreatedAt = deck.CreatedAt,
+            Rate = deck.Rate
+        };
+    }
 }

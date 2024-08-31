@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using MindSharper.Application.Decks.Dtos;
 using MindSharper.Application.Decks.Queries.GetDeckByIdQuery;
+using MindSharper.Application.Decks.Queries.GetDecks;
 using MindSharper.Application.Services;
 using MindSharper.Domain.Entities;
 
@@ -23,9 +24,9 @@ public class DeckController(IDeckService deckService, IMediator mediator) : Cont
 
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<DeckDto>>> GetDecks()
+    public async Task<ActionResult<IEnumerable<MinimalDeckDto>>> GetDecks()
     {
-        var deckDtos = await deckService.GetDecksAsync();
+        var deckDtos = await mediator.Send(new GetDecksQuery());
         return Ok(deckDtos);
     }
 

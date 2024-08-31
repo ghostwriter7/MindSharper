@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using MindSharper.Application.Flashcards.Dtos;
+using MindSharper.Application.Flashcards.Queries.GetFlashcardById;
 using MindSharper.Application.Flashcards.Queries.GetFlashcards;
 
 namespace MindSharper.API.Controllers;
@@ -16,13 +17,18 @@ public class FlashcardController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("{flashcardId:int}")]
-    public async Task<ActionResult<FlashcardDto>> GetFlashcardById([FromRoute] int deckId, [FromRoute] int flashcardId)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<FlashcardDto?>> GetFlashcardById([FromRoute] int deckId, [FromRoute] int flashcardId)
     {
-        throw new NotImplementedException();
+        var flashcard = await mediator.Send(new GetFlashcardByIdQuery(deckId, flashcardId));
+        return Ok(flashcard);
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<FlashcardDto>>> GetFlashbardsByDeckId([FromRoute] int deckId)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<IEnumerable<FlashcardDto>>> GetFlashcardsByDeckId([FromRoute] int deckId)
     {
         var results = await mediator.Send(new GetFlashcardsQuery(deckId));
         return Ok(results);

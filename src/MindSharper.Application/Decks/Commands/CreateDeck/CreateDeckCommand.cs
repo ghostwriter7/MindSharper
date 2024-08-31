@@ -2,7 +2,7 @@
 
 namespace MindSharper.Application.Decks.Commands.CreateDeck;
 
-public class CreateDeckCommand : IRequest<int>
+public class CreateDeckCommand(string name) : IRequest<int>
 {
-    public string Name { get; set; } = default!;
+    public string Name { get; } = name;
 }

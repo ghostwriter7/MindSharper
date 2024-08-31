@@ -3,24 +3,24 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using MindSharper.Application.Decks.Commands.CreateDeck;
 using MindSharper.Application.Decks.Commands.DeleteDeck;
+using MindSharper.Application.Decks.Commands.UpdateDeckName;
 using MindSharper.Application.Decks.Dtos;
 using MindSharper.Application.Decks.Queries.GetDeckByIdQuery;
 using MindSharper.Application.Decks.Queries.GetDecks;
-using MindSharper.Application.Services;
 using MindSharper.Domain.Entities;
 
 namespace MindSharper.API.Controllers;
 
 [ApiController]
 [Route("api/decks")]
-public class DeckController(IDeckService deckService, IMediator mediator) : ControllerBase
+public class DeckController(IMediator mediator) : ControllerBase
 {
     [HttpGet("{deckId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<DeckDto?>> GetDeckById([FromRoute] int deckId)
     {
-        var deckDto = await mediator.Send(new GetDeckByIdQuery() { DeckId = deckId });
+        var deckDto = await mediator.Send(new GetDeckByIdQuery(deckId));
         return Ok(deckDto);
     }
 
@@ -46,7 +46,7 @@ public class DeckController(IDeckService deckService, IMediator mediator) : Cont
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateDeckName([FromRoute] int deckId, [FromQuery] string name)
     {
-        await deckService.UpdateDeckNameAsync(deckId, name);
+        await mediator.Send(new UpdateDeckNameCommand(deckId, name));
         return NoContent();
     }
 
@@ -55,7 +55,7 @@ public class DeckController(IDeckService deckService, IMediator mediator) : Cont
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteDeck([FromRoute] int deckId)
     {
-        await mediator.Send(new DeleteDeckCommand() { DeckId = deckId });
+        await mediator.Send(new DeleteDeckCommand(deckId));
         return NoContent();
     }
 }

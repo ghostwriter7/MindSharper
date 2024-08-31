@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using FluentAssertions;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
-using MindSharper.Application.Decks.Commands.CreateDeck;
-using MindSharper.Application.Decks.Commands.DeleteDeck;
+using MindSharper.Application.Decks.Commands.UpdateDeckName;
 using MindSharper.Application.Tests.Fixtures;
 using MindSharper.Domain.Entities;
 using MindSharper.Domain.Exceptions;
@@ -14,33 +12,34 @@ using MindSharper.Domain.Repositories;
 using Moq;
 using Xunit;
 
-namespace MindSharper.Application.Tests.Decks.Commands.DeleteDeck;
+namespace MindSharper.Application.Tests.Decks.Commands.UpdateDeckName;
 
-[TestSubject(typeof(DeleteDeckCommandHandler))]
-public class DeleteDeckCommandHandlerTest
+[TestSubject(typeof(UpdateDeckNameCommandHandler))]
+public class UpdateDeckNameCommandHandlerTest
 {
-    private readonly Mock<ILogger<DeleteDeckCommandHandler>> _loggerMock = new();
-    private readonly Mock<IDeckRepository> _repositoryMock = new();
-    private readonly DeleteDeckCommandHandler _handler;
-    private readonly DeleteDeckCommand _command = new(100);
 
-    public DeleteDeckCommandHandlerTest()
+    private readonly Mock<ILogger<UpdateDeckNameCommandHandler>> _loggerMock = new();
+    private readonly Mock<IDeckRepository> _repositoryMock = new();
+    private readonly UpdateDeckNameCommandHandler _handler;
+    private readonly UpdateDeckNameCommand _command = new(100, "New name");
+
+    public UpdateDeckNameCommandHandlerTest()
     {
-        _handler = new DeleteDeckCommandHandler(_loggerMock.Object, _repositoryMock.Object);
+        _handler = new UpdateDeckNameCommandHandler(_loggerMock.Object, _repositoryMock.Object);
     }
 
     [Fact]
-    public void Handle_ForExistingDeck_ShouldRemoveIt()
+    public async Task Handle_ForValidRequest_ShouldUpdateName()
     {
         var deck = DeckFixtures.GetAnyDeck();
         _repositoryMock.Setup(repo => repo.GetDeckByIdAsync(_command.DeckId))
             .ReturnsAsync(deck);
 
-        Func<Task> action = async () => await _handler.Handle(_command, CancellationToken.None);
+        await _handler.Handle(_command, CancellationToken.None);
         
-        action.Should().NotThrowAsync();
+        deck.Name.Should().Be(_command.Name);
         _repositoryMock.Verify(repo => repo.GetDeckByIdAsync(_command.DeckId), Times.Once);
-        _repositoryMock.Verify(repo => repo.DeleteDeckAsync(deck), Times.Once);
+        _repositoryMock.Verify(repo => repo.UpdateDeckAsync(deck), Times.Once);
     }
 
 
@@ -54,6 +53,6 @@ public class DeleteDeckCommandHandlerTest
         
         action.Should().ThrowAsync<NotFoundException>();
         _repositoryMock.Verify(repo => repo.GetDeckByIdAsync(_command.DeckId), Times.Once);
-        _repositoryMock.Verify(repo => repo.DeleteDeckAsync(It.IsAny<Deck>()), Times.Never);
+        _repositoryMock.Verify(repo => repo.UpdateDeckAsync(It.IsAny<Deck>()), Times.Never);
     }
 }

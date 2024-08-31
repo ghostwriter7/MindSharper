@@ -2,7 +2,7 @@
 
 namespace MindSharper.Application.Decks.Commands.DeleteDeck;
 
-public class DeleteDeckCommand : IRequest
+public class DeleteDeckCommand(int deckId) : IRequest
 {
-    public int DeckId { get; set; }
+    public int DeckId { get; } = deckId;
 }

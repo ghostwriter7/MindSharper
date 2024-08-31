@@ -22,6 +22,7 @@ public class CreateDeckCommandHandlerTest
     private readonly Mock<IMapper> _mapperMock = new();
     private readonly Mock<IDeckRepository> _repositoryMock = new();
     private readonly CreateDeckCommandHandler _handler;
+    private readonly CreateDeckCommand _command = new CreateDeckCommand("C#");
 
     public CreateDeckCommandHandlerTest()
     {
@@ -31,15 +32,14 @@ public class CreateDeckCommandHandlerTest
     [Fact]
     public async Task Handle_ForValidRequest_ShouldReturnTaskId()
     {
-        var command = new CreateDeckCommand() { Name = "C#" };
-        var deck = new Deck() { Name = command.Name };
+        var deck = new Deck() { Name = _command.Name };
         var deckId = 100;
-        _mapperMock.Setup(mapper => mapper.Map<Deck>(command))
+        _mapperMock.Setup(mapper => mapper.Map<Deck>(_command))
             .Returns(deck);
         _repositoryMock.Setup(repo => repo.CreateDeckAsync(deck))
             .ReturnsAsync(deckId);
 
-        var result = await _handler.Handle(command, CancellationToken.None);
+        var result = await _handler.Handle(_command, CancellationToken.None);
 
         deck.CreatedAt.Should().Be(DateOnly.FromDateTime(DateTime.Now));
         result.Should().Be(deckId);
@@ -48,17 +48,16 @@ public class CreateDeckCommandHandlerTest
     [Fact]
     public async Task Handle_WithDuplicatedName_ShouldThrowDuplicateResourceException()
     {
-        var command = new CreateDeckCommand() { Name = "C#" };
-        var deck = new Deck() { Name = command.Name };
+        var deck = new Deck() { Name = _command.Name };
         var deckId = 100;
         var dbExceptionMock = new Mock<DbException>();
         dbExceptionMock.Setup(exception => exception.Message).Returns("duplicate key");
-        _mapperMock.Setup(mapper => mapper.Map<Deck>(command))
+        _mapperMock.Setup(mapper => mapper.Map<Deck>(_command))
             .Returns(deck);
         _repositoryMock.Setup(repo => repo.CreateDeckAsync(deck))
             .Throws(() => new Exception(null, dbExceptionMock.Object));
 
-        Func<Task> action = async () => await _handler.Handle(command, CancellationToken.None);
+        Func<Task> action = async () => await _handler.Handle(_command, CancellationToken.None);
         action.Should().ThrowAsync<DuplicateResourceException>()
             .WithMessage($"Deck with Name: C# already exists");
     }

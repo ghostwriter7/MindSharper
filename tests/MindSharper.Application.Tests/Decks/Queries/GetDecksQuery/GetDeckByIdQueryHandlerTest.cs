@@ -23,9 +23,12 @@ public class GetDeckByIdQueryHandlerTest
     private readonly Mock<IDeckRepository> _deckRepositoryMock = new();
     private readonly Mock<IMapper> _mapperMock = new();
     private readonly GetDeckByIdQueryHandler _handler;
+    private readonly int _deckId = 1;
+    private readonly GetDeckByIdQuery _query;
     
     public GetDeckByIdQueryHandlerTest()
     {
+        _query = new GetDeckByIdQuery(_deckId);
         _handler = new GetDeckByIdQueryHandler(_loggerMock.Object, _deckRepositoryMock.Object, _mapperMock.Object);
     }
 
@@ -34,16 +37,15 @@ public class GetDeckByIdQueryHandlerTest
     {
         var deck = DeckFixtures.GetAnyDeck();
         var deckDto = DeckFixtures.GetDeckDtoFromDeck(deck);
-        var query = new GetDeckByIdQuery() { DeckId = deck.Id };
         
-        _deckRepositoryMock.Setup(repo => repo.GetDeckByIdAsync(query.DeckId))
+        _deckRepositoryMock.Setup(repo => repo.GetDeckByIdAsync(_query.DeckId))
             .ReturnsAsync(deck);
         _mapperMock.Setup(mapper => mapper.Map<DeckDto>(deck))
             .Returns(deckDto);
 
-        var result = await _handler.Handle(query, CancellationToken.None);
+        var result = await _handler.Handle(_query, CancellationToken.None);
 
-        _deckRepositoryMock.Verify(repo => repo.GetDeckByIdAsync(query.DeckId), Times.Once);
+        _deckRepositoryMock.Verify(repo => repo.GetDeckByIdAsync(_query.DeckId), Times.Once);
         _mapperMock.Verify(mapper => mapper.Map<DeckDto>(deck), Times.Once);
         result.Should().NotBeNull();
         result.Should().BeEquivalentTo(deckDto);
@@ -52,17 +54,14 @@ public class GetDeckByIdQueryHandlerTest
     [Fact]
     public async Task Handle_ForNonExistingDeckId_ShouldThrowNotFoundException()
     {
-        var deckId = 1;
-        var query = new GetDeckByIdQuery() { DeckId = deckId };
-        
-        _deckRepositoryMock.Setup(repo => repo.GetDeckByIdAsync(deckId))
+        _deckRepositoryMock.Setup(repo => repo.GetDeckByIdAsync(_deckId))
             .ReturnsAsync((Deck) null);
 
-        Func<Task> action = async () => await _handler.Handle(query, CancellationToken.None);
+        Func<Task> action = async () => await _handler.Handle(_query, CancellationToken.None);
         action.Should()
             .ThrowAsync<NotFoundException>();
         
-        _deckRepositoryMock.Verify(repo => repo.GetDeckByIdAsync(query.DeckId), Times.Once);
+        _deckRepositoryMock.Verify(repo => repo.GetDeckByIdAsync(_query.DeckId), Times.Once);
         _mapperMock.Verify(mapper => mapper.Map<DeckDto>(It.IsAny<Deck>()), Times.Never);
     }
 }

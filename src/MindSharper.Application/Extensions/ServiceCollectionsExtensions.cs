@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using MindSharper.Application.Decks.Dtos;
 using MindSharper.Application.Flashcards.Dtos;
-using MindSharper.Application.Services;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 
@@ -13,9 +12,7 @@ public static class ServiceCollectionsExtensions
     {
         var assembly = typeof(ServiceCollectionsExtensions).Assembly;
         services.AddAutoMapper(typeof(DeckProfile), typeof(FlashcardProfile));
-
-        services.AddScoped<IDeckService, DeckService>();
-
+        
         services.AddValidatorsFromAssembly(assembly)
             .AddFluentValidationAutoValidation();
 

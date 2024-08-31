@@ -11,16 +11,6 @@ namespace MindSharper.Application.Services;
 
 public class DeckService(IDeckRepository repository, ILogger<DeckService> logger, IMapper mapper) : IDeckService
 {
-    public async Task DeleteDeckAsync(int deckId)
-    {
-        logger.LogWarning($"Attempt to delete {nameof(Deck)} with ID: {deckId}");
-        var deck = await repository.GetDeckByIdAsync(deckId)
-                   ?? throw new NotFoundException(nameof(Deck), deckId.ToString());
-
-        await repository.DeleteDeckAsync(deck);
-        logger.LogWarning($"{nameof(Deck)} ({deckId}) has been successfully deleted");
-    }
-
     public async Task UpdateDeckNameAsync(int deckId, string name)
     {
         logger.LogInformation($"Updating {nameof(Deck)} ({deckId}) name");

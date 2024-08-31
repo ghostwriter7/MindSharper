@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using MindSharper.Application.Decks.Commands.CreateDeck;
+using MindSharper.Application.Decks.Commands.DeleteDeck;
 using MindSharper.Application.Decks.Dtos;
 using MindSharper.Application.Decks.Queries.GetDeckByIdQuery;
 using MindSharper.Application.Decks.Queries.GetDecks;
@@ -54,7 +55,7 @@ public class DeckController(IDeckService deckService, IMediator mediator) : Cont
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteDeck([FromRoute] int deckId)
     {
-        await deckService.DeleteDeckAsync(deckId);
+        await mediator.Send(new DeleteDeckCommand() { DeckId = deckId });
         return NoContent();
     }
 }

@@ -5,6 +5,5 @@ namespace MindSharper.Application.Services;
 
 public interface IDeckService
 {
-    Task DeleteDeckAsync(int deckId);
     Task UpdateDeckNameAsync(int deckId, string name);
 }

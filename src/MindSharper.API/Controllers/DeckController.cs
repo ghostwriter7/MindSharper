@@ -41,12 +41,12 @@ public class DeckController(IMediator mediator) : ControllerBase
         return CreatedAtAction(nameof(GetDeckById), new { deckId }, null);
     }
 
-    [HttpPatch("{deckId:int}")]
+    [HttpPatch("name")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateDeckName([FromRoute] int deckId, [FromQuery] string name)
+    public async Task<IActionResult> UpdateDeckName([FromBody] UpdateDeckNameCommand command)
     {
-        await mediator.Send(new UpdateDeckNameCommand(deckId, name));
+        await mediator.Send(command);
         return NoContent();
     }
 

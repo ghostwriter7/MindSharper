@@ -14,11 +14,17 @@ POST {{ MindSharper.API_HostAddress}}/api/decks
 Content-Type: application/json
 
 {
-  "name": "PowerShell"
+  "name": "C"
 }
 
 ###
 DELETE {{MindSharper.API_HostAddress}}/api/decks/3
 
 ###
-PATCH {{MindSharper.API_HostAddress}}/api/decks/6?name=NewName2
+PATCH {{MindSharper.API_HostAddress}}/api/decks/name
+Content-Type: application/json
+
+{
+  "name": "C#",
+  "deckId": 1
+}

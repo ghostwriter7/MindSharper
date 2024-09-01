@@ -1,3 +1,4 @@
+using Microsoft.OpenApi.Models;
 using MindSharper.Infrastructure.Extensions;
 using MindSharper.Infrastructure.Seeders;
 using MindSharper.Application.Extensions;
@@ -16,7 +17,6 @@ public class Program
         builder.Services.AddInfrastructure(builder.Configuration);
         builder.Services.AddApplication();
         
-
         var app = builder.Build();
 
         var scope = app.Services.CreateScope();
@@ -24,6 +24,12 @@ public class Program
         await databaseSeeder.Seed();
 
         app.UseMiddleware<ErrorHandlingMiddleware>();
+
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
         
         app.UseHttpsRedirection();
 

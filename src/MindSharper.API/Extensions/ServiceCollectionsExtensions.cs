@@ -10,12 +10,35 @@ public static class ServiceCollectionsExtensions
     {
         builder.Services.AddControllers();
         builder.Services.AddScoped<ErrorHandlingMiddleware>();
-        
+
         builder.Services.AddSwaggerGen(config =>
         {
             config.SwaggerDoc("v1", new OpenApiInfo { Title = "MindSharper API", Version = "v1" });
+
+            var securityDefinitionName = "bearerAuth";
+            config.AddSecurityDefinition(securityDefinitionName, new OpenApiSecurityScheme()
+            {
+                Type = SecuritySchemeType.Http,
+                Scheme = "Bearer"
+            });
+
+            config.AddSecurityRequirement(new OpenApiSecurityRequirement()
+            {
+                {
+                    new OpenApiSecurityScheme()
+                    {
+                        Reference = new OpenApiReference()
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = securityDefinitionName
+                        }
+                    },
+                    []
+                }
+            });
         });
 
+        builder.Services.AddAuthentication();
         builder.Services.AddEndpointsApiExplorer();
 
         builder.Host.UseSerilog((context, configuration) =>

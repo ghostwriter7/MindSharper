@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using MindSharper.API.Controllers;
 using MindSharper.Application.Flashcards.Commands.CreateFlashcard;
+using MindSharper.Application.Flashcards.Dtos;
 using MindSharper.Domain.Entities;
 using MindSharper.Domain.Exceptions;
 using MindSharper.Domain.Repositories;
@@ -26,7 +27,8 @@ public class FlashcardControllerTest : IClassFixture<WebApplicationFactory<Progr
     private readonly Mock<IDeckRepository> _deckRepositoryMock = new();
     private readonly Mock<IFlashcardRepository> _flashcardRepositoryMock = new();
     private readonly HttpClient _client;
-    private readonly int _deckId = 1;
+    private const int _deckId = 1;
+    private const int _flashcardId = 100;
 
     public FlashcardControllerTest(WebApplicationFactory<Program> webApplicationFactory)
     {
@@ -55,7 +57,7 @@ public class FlashcardControllerTest : IClassFixture<WebApplicationFactory<Progr
             .ReturnsAsync(new Deck() { Id = _deckId });
         _flashcardRepositoryMock.Setup(repo => repo.CreateFlashcardAsync(It.IsAny<Flashcard>()))
             .ReturnsAsync(flashcardId);
-        
+
         var results = await _client.PostAsync($"api/decks/{_deckId}/flashcards", JsonContent.Create(command));
 
         results.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -72,7 +74,7 @@ public class FlashcardControllerTest : IClassFixture<WebApplicationFactory<Progr
         };
         _deckRepositoryMock.Setup(repo => repo.GetDeckByIdAsync(_deckId))
             .Throws(() => new NotFoundException(nameof(Deck), _deckId.ToString()));
-        
+
         var results = await _client.PostAsync($"api/decks/{_deckId}/flashcards", JsonContent.Create(command));
 
         results.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -92,9 +94,42 @@ public class FlashcardControllerTest : IClassFixture<WebApplicationFactory<Progr
             .ReturnsAsync(new Deck() { Id = _deckId });
         _flashcardRepositoryMock.Setup(repo => repo.CreateFlashcardAsync(It.IsAny<Flashcard>()))
             .Throws(() => new Exception(null, dbExceptionMock.Object));
-        
+
         var results = await _client.PostAsync($"api/decks/{_deckId}/flashcards", JsonContent.Create(command));
-        
+
         results.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task GetFlashcardById_ForValidRequest_ShouldReturn200Ok()
+    {
+        var flashcard = new Flashcard()
+        {
+            DeckId = _deckId, Frontside = "Any question", Backside = "Any answer", Id = _flashcardId,
+            CreatedAt = new DateOnly(2024, 7, 7)
+        };
+        _flashcardRepositoryMock.Setup(repo => repo.GetFlashcardByIdAsync(_deckId, _flashcardId))
+            .ReturnsAsync(flashcard);
+
+        var results = await _client.GetAsync($"api/decks/{_deckId}/flashcards/{_flashcardId}");
+
+        results.StatusCode.Should().Be(HttpStatusCode.OK);
+        var content = await results.Content.ReadFromJsonAsync<FlashcardDto>();
+        content.Should().BeEquivalentTo(new FlashcardDto()
+        {
+            Backside = flashcard.Backside, Frontside = flashcard.Frontside, Id = flashcard.Id,
+            CreatedAt = flashcard.CreatedAt
+        });
+    }
+
+    [Fact]
+    public async Task GetFlashcardById_ForInvalidRequest_ShouldReturn404NotFound()
+    {
+        _flashcardRepositoryMock.Setup(repo => repo.GetFlashcardByIdAsync(_deckId, _flashcardId))
+            .Throws(() => new NotFoundException(nameof(Flashcard), _flashcardId.ToString()));
+        
+        var results = await _client.GetAsync($"api/decks/{_deckId}/flashcards/{_flashcardId}");
+
+        results.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 }

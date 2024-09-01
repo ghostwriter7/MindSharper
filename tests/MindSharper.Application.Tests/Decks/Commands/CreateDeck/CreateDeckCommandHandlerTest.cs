@@ -7,6 +7,7 @@ using FluentAssertions;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 using MindSharper.Application.Decks.Commands.CreateDeck;
+using MindSharper.Application.Users;
 using MindSharper.Domain.Entities;
 using MindSharper.Domain.Exceptions;
 using MindSharper.Domain.Repositories;
@@ -21,12 +22,13 @@ public class CreateDeckCommandHandlerTest
     private readonly Mock<ILogger<CreateDeckCommandHandler>> _loggerMock = new();
     private readonly Mock<IMapper> _mapperMock = new();
     private readonly Mock<IDeckRepository> _repositoryMock = new();
+    private readonly Mock<IUserContext> _userContextMock = new();
     private readonly CreateDeckCommandHandler _handler;
     private readonly CreateDeckCommand _command = new CreateDeckCommand("C#");
 
     public CreateDeckCommandHandlerTest()
     {
-        _handler = new CreateDeckCommandHandler(_loggerMock.Object, _mapperMock.Object, _repositoryMock.Object);
+        _handler = new CreateDeckCommandHandler(_loggerMock.Object, _mapperMock.Object, _repositoryMock.Object, _userContextMock.Object);
     }
     
     [Fact]

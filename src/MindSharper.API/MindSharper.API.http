@@ -14,7 +14,7 @@ POST {{ MindSharper.API_HostAddress}}/api/decks
 Content-Type: application/json
 
 {
-  "name": "C"
+  "name": "JavaScript"
 }
 
 ###

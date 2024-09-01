@@ -5,7 +5,7 @@ using MindSharper.Domain.Entities;
 
 namespace MindSharper.Infrastructure.Persistence;
 
-internal class MindSharperDatabaseContext(DbContextOptions<MindSharperDatabaseContext> options) : IdentityDbContext(options)
+internal class MindSharperDatabaseContext(DbContextOptions<MindSharperDatabaseContext> options) : IdentityDbContext<User>(options)
 {
     internal DbSet<Deck> Decks { get; set; }
     internal DbSet<Flashcard> Flashcards { get; set; }
@@ -14,6 +14,11 @@ internal class MindSharperDatabaseContext(DbContextOptions<MindSharperDatabaseCo
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.Entity<User>()
+            .HasMany<Deck>(user => user.OwnedDecks)
+            .WithOne(deck => deck.Owner)
+            .HasForeignKey(deck => deck.UserId);
+        
         modelBuilder.Entity<Deck>()
             .HasMany<Flashcard>(d => d.Flashcards)
             .WithOne()

@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using MindSharper.Application.Decks.Commands.CreateDeck;
@@ -35,6 +36,8 @@ public class DeckController(IMediator mediator) : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [Authorize]
     public async Task<IActionResult> CreateDeck([FromBody] CreateDeckCommand command)
     {
         var deckId = await mediator.Send(command);

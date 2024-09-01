@@ -7,6 +7,7 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using FluentAssertions;
 using JetBrains.Annotations;
+using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.SqlClient;
@@ -15,8 +16,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using MindSharper.API.Controllers;
 using MindSharper.Application.Decks.Dtos;
+using MindSharper.Application.Users;
 using MindSharper.Domain.Entities;
 using MindSharper.Domain.Repositories;
+using MindSharper.Infrastructure.Authorization;
 using Moq;
 using Xunit;
 
@@ -27,14 +30,21 @@ public class DeckControllerTest : IClassFixture<WebApplicationFactory<Program>>
 {
     private readonly WebApplicationFactory<Program> _webApplicationFactory;
     private readonly Mock<IDeckRepository> _deckRepositoryMock = new();
-    private HttpClient _client;
+    private readonly HttpClient _client;
+    private readonly CurrentUser _currentUser = new CurrentUser(Guid.NewGuid().ToString(), null, null);
     
     public DeckControllerTest(WebApplicationFactory<Program> webApplicationFactory)
     {
+        var userContextMock = new Mock<IUserContext>();
+        userContextMock.Setup(userContext => userContext.GetCurrentUser())
+            .Returns(_currentUser);
+        
         _webApplicationFactory = webApplicationFactory.WithWebHostBuilder(builder =>
         {
             builder.ConfigureServices(services =>
             {
+                services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+                services.Replace(ServiceDescriptor.Scoped(typeof(IUserContext), _ => userContextMock.Object));
                 services.Replace(ServiceDescriptor.Scoped(typeof(IDeckRepository),
                     _ => _deckRepositoryMock.Object));
             });
@@ -131,7 +141,7 @@ public class DeckControllerTest : IClassFixture<WebApplicationFactory<Program>>
     {
         var deckId = 100;
         _deckRepositoryMock.Setup(repo => repo.GetDeckByIdAsync(deckId))
-            .ReturnsAsync(new Deck() { Id = deckId });
+            .ReturnsAsync(new Deck() { Id = deckId, UserId = _currentUser.Id});
 
         var result = await _client.DeleteAsync($"api/decks/{deckId}");
 

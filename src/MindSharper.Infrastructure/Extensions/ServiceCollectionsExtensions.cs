@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MindSharper.Domain.Entities;
 using MindSharper.Domain.Repositories;
 using MindSharper.Infrastructure.Persistence;
 using MindSharper.Infrastructure.Repositories;
@@ -21,5 +22,8 @@ public static class ServiceCollectionsExtensions
         services.AddScoped<IDatabaseSeeder, DatabaseSeeder>();
         services.AddScoped<IDeckRepository, DeckRepository>();
         services.AddScoped<IFlashcardRepository, FlashcardRepository>();
+
+        services.AddIdentityApiEndpoints<User>()
+            .AddEntityFrameworkStores<MindSharperDatabaseContext>();
     }
 }

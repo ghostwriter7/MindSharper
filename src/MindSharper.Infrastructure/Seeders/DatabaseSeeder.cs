@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MindSharper.Domain.Entities;
 using MindSharper.Infrastructure.Persistence;
-
+    
 namespace MindSharper.Infrastructure.Seeders;
 
 internal class DatabaseSeeder(MindSharperDatabaseContext context) : IDatabaseSeeder

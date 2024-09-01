@@ -16,6 +16,8 @@ public static class ServiceCollectionsExtensions
             config.SwaggerDoc("v1", new OpenApiInfo { Title = "MindSharper API", Version = "v1" });
         });
 
+        builder.Services.AddEndpointsApiExplorer();
+
         builder.Host.UseSerilog((context, configuration) =>
         {
             configuration.ReadFrom.Configuration(context.Configuration);

@@ -4,6 +4,7 @@ using MindSharper.Infrastructure.Seeders;
 using MindSharper.Application.Extensions;
 using MindSharper.API.Extensions;
 using MindSharper.API.Middlewares;
+using MindSharper.Domain.Entities;
 using Serilog;
 
 namespace MindSharper.API;
@@ -33,6 +34,10 @@ public class Program
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+
+        app.MapGroup("api/identity")
+            .WithTags("Identity")
+            .MapIdentityApi<User>();
         
         app.UseHttpsRedirection();
 

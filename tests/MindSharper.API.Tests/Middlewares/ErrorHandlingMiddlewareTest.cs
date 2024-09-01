@@ -55,7 +55,17 @@ public class ErrorHandlingMiddlewareTest
 
         _httpContext.Response.StatusCode.Should().Be(404);
     }
-    
+
+    [Fact]
+    public async Task InvokeAsync_WhenUnauthorizedExceptionThrown_ShouldReturn403Unauthorized()
+    {
+        RequestDelegate requestDelegate =
+            (_) => throw new UnauthorizedException(nameof(Deck), 1, Guid.NewGuid().ToString());
+
+        await _errorHandlingMiddleware.InvokeAsync(_httpContext, requestDelegate);
+
+        _httpContext.Response.StatusCode.Should().Be(403);
+    }
     
     [Fact]
     public async Task InvokeAsync_WhenAnyExceptionThrown_ShouldReturn500InternalServerError()

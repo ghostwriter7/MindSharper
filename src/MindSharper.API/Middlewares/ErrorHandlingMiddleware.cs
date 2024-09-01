@@ -10,6 +10,12 @@ public class ErrorHandlingMiddleware(ILogger<ErrorHandlingMiddleware> logger) : 
         {
             await next(context);
         }
+        catch (UnauthorizedException unauthorizedException)
+        {
+            logger.LogWarning(unauthorizedException.Message);
+            context.Response.StatusCode = 403;
+            await context.Response.WriteAsync(unauthorizedException.Message);
+        }
         catch (DuplicateResourceException duplicateResourceException)
         {
             logger.LogWarning(duplicateResourceException.Message);

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MindSharper.Application.Flashcards.Commands.CreateFlashcard;
 using MindSharper.Application.Flashcards.Commands.DeleteFlashcard;
+using MindSharper.Application.Flashcards.Commands.UpdateFlashcard;
 using MindSharper.Application.Flashcards.Dtos;
 using MindSharper.Application.Flashcards.Queries.GetFlashcardById;
 using MindSharper.Application.Flashcards.Queries.GetFlashcards;
@@ -50,8 +51,12 @@ public class FlashcardController(IMediator mediator) : ControllerBase
     }
 
     [HttpPatch]
-    public async Task<IActionResult> UpdateFlashcard([FromRoute] int deckId)
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdateFlashcard([FromRoute] int deckId, [FromBody] UpdateFlashcardCommand command)
     {
-        throw new NotImplementedException();
+        command.DeckId = deckId;
+        await mediator.Send(command);
+        return NoContent();
     }
 }

@@ -2,9 +2,9 @@
 
 namespace MindSharper.Application.Flashcards.Commands.CreateFlashcard;
 
-public class CreateFlashcardComcandValidator : AbstractValidator<CreateFlashcardCommand>
+public class CreateFlashcardCommandValidator : AbstractValidator<CreateFlashcardCommand>
 {
-    public CreateFlashcardComcandValidator()
+    public CreateFlashcardCommandValidator()
     {
         RuleFor(command => command.Frontside)
             .Length(3, 100);

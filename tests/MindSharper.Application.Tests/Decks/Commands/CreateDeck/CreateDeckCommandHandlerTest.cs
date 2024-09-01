@@ -25,10 +25,13 @@ public class CreateDeckCommandHandlerTest
     private readonly Mock<IUserContext> _userContextMock = new();
     private readonly CreateDeckCommandHandler _handler;
     private readonly CreateDeckCommand _command = new CreateDeckCommand("C#");
+    private readonly string _anyUserId = Guid.NewGuid().ToString();
 
     public CreateDeckCommandHandlerTest()
     {
         _handler = new CreateDeckCommandHandler(_loggerMock.Object, _mapperMock.Object, _repositoryMock.Object, _userContextMock.Object);
+        _userContextMock.Setup(userContext => userContext.GetCurrentUser())
+            .Returns(new CurrentUser(_anyUserId, null, null));
     }
     
     [Fact]
@@ -43,6 +46,7 @@ public class CreateDeckCommandHandlerTest
 
         var result = await _handler.Handle(_command, CancellationToken.None);
 
+        deck.UserId.Should().Be(_anyUserId);
         deck.CreatedAt.Should().Be(DateOnly.FromDateTime(DateTime.Now));
         result.Should().Be(deckId);
     }

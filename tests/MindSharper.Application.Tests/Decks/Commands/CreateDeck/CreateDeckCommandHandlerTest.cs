@@ -8,8 +8,10 @@ using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 using MindSharper.Application.Decks.Commands.CreateDeck;
 using MindSharper.Application.Users;
+using MindSharper.Domain.Constants;
 using MindSharper.Domain.Entities;
 using MindSharper.Domain.Exceptions;
+using MindSharper.Domain.Interfaces;
 using MindSharper.Domain.Repositories;
 using Moq;
 using Xunit;
@@ -25,15 +27,19 @@ public class CreateDeckCommandHandlerTest
     private readonly Mock<IUserContext> _userContextMock = new();
     private readonly CreateDeckCommandHandler _handler;
     private readonly CreateDeckCommand _command = new CreateDeckCommand("C#");
+    private readonly Mock<IResourceAuthorizationService<Deck>> _resourceAuthorizationService = new();
     private readonly string _anyUserId = Guid.NewGuid().ToString();
 
     public CreateDeckCommandHandlerTest()
     {
-        _handler = new CreateDeckCommandHandler(_loggerMock.Object, _mapperMock.Object, _repositoryMock.Object, _userContextMock.Object);
+        _handler = new CreateDeckCommandHandler(_loggerMock.Object, _mapperMock.Object, _repositoryMock.Object,
+            _userContextMock.Object, _resourceAuthorizationService.Object);
         _userContextMock.Setup(userContext => userContext.GetCurrentUser())
             .Returns(new CurrentUser(_anyUserId, null, null));
+        _resourceAuthorizationService.Setup(authService => authService.IsAuthorized(It.IsAny<Deck>(), ResourceOperation.Create))
+            .Returns(true);
     }
-    
+
     [Fact]
     public async Task Handle_ForValidRequest_ShouldReturnTaskId()
     {

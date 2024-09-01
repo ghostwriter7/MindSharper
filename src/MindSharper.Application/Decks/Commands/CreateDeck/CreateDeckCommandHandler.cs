@@ -3,8 +3,10 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using MindSharper.Application.Helpers;
 using MindSharper.Application.Users;
+using MindSharper.Domain.Constants;
 using MindSharper.Domain.Entities;
 using MindSharper.Domain.Exceptions;
+using MindSharper.Domain.Interfaces;
 using MindSharper.Domain.Repositories;
 
 namespace MindSharper.Application.Decks.Commands.CreateDeck;
@@ -13,7 +15,8 @@ public class CreateDeckCommandHandler(
     ILogger<CreateDeckCommandHandler> logger,
     IMapper mapper,
     IDeckRepository repository,
-    IUserContext userContext) : IRequestHandler<CreateDeckCommand, int>
+    IUserContext userContext,
+    IResourceAuthorizationService<Deck> deckAuthorizationService) : IRequestHandler<CreateDeckCommand, int>
 {
     public async Task<int> Handle(CreateDeckCommand request, CancellationToken cancellationToken)
     {
@@ -23,6 +26,9 @@ public class CreateDeckCommandHandler(
         deck.UserId = currentUser.Id;
         deck.CreatedAt = DateOnly.FromDateTime(DateTime.Now);
 
+        if (!deckAuthorizationService.IsAuthorized(deck, ResourceOperation.Create))
+            throw new UnauthorizedException(nameof(Deck), deck.Id, currentUser.Id);
+            
         try
         {
             var deckId = await repository.CreateDeckAsync(deck);

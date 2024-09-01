@@ -56,6 +56,7 @@ public class DeckController(IMediator mediator) : ControllerBase
     [HttpDelete("{deckId:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [Authorize]
     public async Task<IActionResult> DeleteDeck([FromRoute] int deckId)
     {
         await mediator.Send(new DeleteDeckCommand(deckId));

@@ -3,9 +3,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MindSharper.Domain.Entities;
 using MindSharper.Domain.Repositories;
+using MindSharper.Infrastructure.Authorization;
 using MindSharper.Infrastructure.Persistence;
 using MindSharper.Infrastructure.Repositories;
 using MindSharper.Infrastructure.Seeders;
+using MindSharper.Domain.Interfaces;
+
 
 namespace MindSharper.Infrastructure.Extensions;
 
@@ -25,5 +28,7 @@ public static class ServiceCollectionsExtensions
 
         services.AddIdentityApiEndpoints<User>()
             .AddEntityFrameworkStores<MindSharperDatabaseContext>();
+
+        services.AddScoped<IResourceAuthorizationService<Deck>, DeckAuthorizationService>();
     }
 }

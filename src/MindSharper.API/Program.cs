@@ -4,6 +4,7 @@ using MindSharper.Infrastructure.Seeders;
 using MindSharper.Application.Extensions;
 using MindSharper.API.Extensions;
 using MindSharper.API.Middlewares;
+using Serilog;
 
 namespace MindSharper.API;
 
@@ -13,7 +14,7 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         
-        builder.Services.AddPresentation();
+        builder.AddPresentation();
         builder.Services.AddInfrastructure(builder.Configuration);
         builder.Services.AddApplication();
         
@@ -25,6 +26,8 @@ public class Program
 
         app.UseMiddleware<ErrorHandlingMiddleware>();
 
+        app.UseSerilogRequestLogging();
+        
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();

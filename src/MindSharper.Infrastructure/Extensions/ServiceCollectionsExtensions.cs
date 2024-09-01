@@ -14,7 +14,8 @@ public static class ServiceCollectionsExtensions
     {
         services.AddDbContext<MindSharperDatabaseContext>(options =>
         {
-            options.UseSqlServer(configuration.GetConnectionString("MindSharperDb"));
+            options.UseSqlServer(configuration.GetConnectionString("MindSharperDb"))
+                .EnableSensitiveDataLogging();
         });
 
         services.AddScoped<IDatabaseSeeder, DatabaseSeeder>();

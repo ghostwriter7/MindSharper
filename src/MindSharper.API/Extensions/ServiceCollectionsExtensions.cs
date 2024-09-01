@@ -1,18 +1,24 @@
 ﻿using Microsoft.OpenApi.Models;
 using MindSharper.API.Middlewares;
+using Serilog;
 
 namespace MindSharper.API.Extensions;
 
 public static class ServiceCollectionsExtensions
 {
-    public static void AddPresentation(this IServiceCollection services)
+    public static void AddPresentation(this WebApplicationBuilder builder)
     {
-        services.AddControllers();
-        services.AddScoped<ErrorHandlingMiddleware>();
+        builder.Services.AddControllers();
+        builder.Services.AddScoped<ErrorHandlingMiddleware>();
         
-        services.AddSwaggerGen(config =>
+        builder.Services.AddSwaggerGen(config =>
         {
             config.SwaggerDoc("v1", new OpenApiInfo { Title = "MindSharper API", Version = "v1" });
+        });
+
+        builder.Host.UseSerilog((context, configuration) =>
+        {
+            configuration.ReadFrom.Configuration(context.Configuration);
         });
     }
 }

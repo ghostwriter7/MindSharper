@@ -13,7 +13,7 @@ public class UserContext(IHttpContextAccessor httpContextAccessor) : IUserContex
         if (user.Identity is null || !user.Identity.IsAuthenticated)
             return null;
 
-        var id = user.FindFirst(claim => claim.Type == ClaimTypes.Name)!.Value;
+        var id = user.FindFirst(claim => claim.Type == ClaimTypes.NameIdentifier)!.Value;
         var email = user.FindFirst(claim => claim.Type == ClaimTypes.Email)!.Value;
         var roles = user.Claims.Where(claim => claim.Type == ClaimTypes.Role).Select(claim => claim.Value);
 

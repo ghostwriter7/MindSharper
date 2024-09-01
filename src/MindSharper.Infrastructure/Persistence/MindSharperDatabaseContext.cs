@@ -1,10 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MindSharper.Domain.Entities;
 
-namespace MindSharper.Infrastructure.Persistance;
+namespace MindSharper.Infrastructure.Persistence;
 
-internal class MindSharperDatabaseContext(DbContextOptions<MindSharperDatabaseContext> options) : DbContext(options)
+internal class MindSharperDatabaseContext(DbContextOptions<MindSharperDatabaseContext> options) : IdentityDbContext(options)
 {
     internal DbSet<Deck> Decks { get; set; }
     internal DbSet<Flashcard> Flashcards { get; set; }

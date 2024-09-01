@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
 using MindSharper.Domain.Repositories;
-using MindSharper.Infrastructure.Persistance;
+using MindSharper.Infrastructure.Persistence;
 
 namespace MindSharper.Infrastructure.Repositories;
 

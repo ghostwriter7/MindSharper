@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MindSharper.Domain.Entities;
-using MindSharper.Infrastructure.Persistance;
+using MindSharper.Infrastructure.Persistence;
 
 namespace MindSharper.Infrastructure.Seeders;
 

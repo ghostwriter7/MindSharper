@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MindSharper.Domain.Repositories;
-using MindSharper.Infrastructure.Persistance;
+using MindSharper.Infrastructure.Persistence;
 using MindSharper.Infrastructure.Repositories;
 using MindSharper.Infrastructure.Seeders;
 

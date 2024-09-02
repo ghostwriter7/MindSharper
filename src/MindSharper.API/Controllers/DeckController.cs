@@ -55,6 +55,7 @@ public class DeckController(IMediator mediator) : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]   
+    [Authorize]
     public async Task<IActionResult> UpdateDeckName([FromBody] UpdateDeckNameCommand command)
     {
         await mediator.Send(command);

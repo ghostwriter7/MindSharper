@@ -62,7 +62,8 @@ public class DeckControllerTest : IClassFixture<WebApplicationFactory<Program>>
             Name = "C#",
             CreatedAt = new DateOnly(2024, 7, 7),
             Flashcards = [],
-            Rate = 3
+            Rate = 3,
+            UserId = _currentUser.Id
         };
         _deckRepositoryMock.Setup(repo => repo.GetDeckByIdAsync(deck.Id)).ReturnsAsync(deck);
 
@@ -94,7 +95,7 @@ public class DeckControllerTest : IClassFixture<WebApplicationFactory<Program>>
     [Fact]
     public async Task GetDecks_ForValidRequest_ShouldReturn200Ok()
     {
-        _deckRepositoryMock.Setup(repo => repo.GetDecksAsync()).ReturnsAsync([]);
+        _deckRepositoryMock.Setup(repo => repo.GetDecksByUserIdAsync(It.IsAny<string>())).ReturnsAsync([]);
 
         var result = await _client.GetAsync("api/decks");
 

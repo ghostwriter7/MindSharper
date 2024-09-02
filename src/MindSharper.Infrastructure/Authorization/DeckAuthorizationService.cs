@@ -18,11 +18,11 @@ public class DeckAuthorizationService(
 
         switch (operation)
         {
-            case ResourceOperation.Read or ResourceOperation.Create:
-                logger.LogInformation("Create or Read operation - authorization successful");
+            case ResourceOperation.Create:
+                logger.LogInformation("Create operation - authorization successful");
                 return true;
-            case ResourceOperation.Delete or ResourceOperation.Update when deck.UserId == currentUser.Id:
-                logger.LogInformation("Delete or Update operation by the owner - authorization successful");
+            case ResourceOperation.Read or ResourceOperation.Delete or ResourceOperation.Update when deck.UserId == currentUser.Id:
+                logger.LogInformation("Read or Delete or Update operation by the owner - authorization successful");
                 return true;
             default:
                 logger.LogInformation("Authorization unsuccessful");

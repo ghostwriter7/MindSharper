@@ -6,6 +6,6 @@ public class UpdateFlashcardCommand : IRequest
 {
     public int FlashcardId { get; init; }
     public int DeckId { get; set; }
-    public string Frontside { get; init; }
-    public string Backside { get; init; }
+    public string Frontside { get; init; } = default!;
+    public string Backside { get; init; } = default!;
 }

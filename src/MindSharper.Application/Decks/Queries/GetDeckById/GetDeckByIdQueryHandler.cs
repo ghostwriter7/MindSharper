@@ -8,7 +8,7 @@ using MindSharper.Domain.Repositories;
 
 namespace MindSharper.Application.Decks.Queries.GetDeckByIdQuery;
 
-public class GetDeckByIdQueryHandler(ILogger<GetDeckByIdQueryHandler> logger, IDeckRepository deckRepository, IMapper mapper) : IRequestHandler<GetDeckByIdQuery, DeckDto>
+public class GetDeckByIdQueryHandler(ILogger<GetDeckByIdQueryHandler> logger, IDeckRepository deckRepository, IMapper mapper) : IRequestHandler<GetDeckByIdQuery, DeckDto?>
 {
     public async Task<DeckDto> Handle(GetDeckByIdQuery request, CancellationToken cancellationToken)
     {

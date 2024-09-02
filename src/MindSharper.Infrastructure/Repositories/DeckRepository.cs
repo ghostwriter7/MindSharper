@@ -16,9 +16,9 @@ internal class DeckRepository(MindSharperDatabaseContext context) : BaseReposito
         return deck;
     }
 
-    public async Task<IEnumerable<Deck>> GetDecksAsync()
+    public async Task<IEnumerable<Deck>> GetDecksByUserIdAsync(string userId)
     {
-        var decks = await context.Decks.ToListAsync();
+        var decks = await context.Decks.Where(deck => deck.UserId == userId).ToListAsync();
         return decks;
     }
 

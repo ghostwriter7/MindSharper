@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,7 +10,9 @@ using Microsoft.Extensions.Logging;
 using MindSharper.Application.Decks.Dtos;
 using MindSharper.Application.Decks.Queries.GetDecks;
 using MindSharper.Application.Tests.Fixtures;
+using MindSharper.Application.Users;
 using MindSharper.Domain.Entities;
+using MindSharper.Domain.Interfaces;
 using MindSharper.Domain.Repositories;
 using Moq;
 using Xunit;
@@ -22,27 +25,32 @@ public class GetDecksQueryHandlerTest
     [Fact]
     public async Task Handle_ForValidRequest_ShouldReturnListOfMinimalDeckDtos()
     {
+        var userId = Guid.NewGuid().ToString();
         List<Deck> decks = [DeckFixtures.GetAnyDeck()];
         var minimalDeckDtos = decks.Select(DeckFixtures.GetMinimalDeckDtoFromDeck);
         var loggerMock = new Mock<ILogger<GetDecksQueryHandler>>();
 
+        var userContextMock = new Mock<IUserContext>();
+        userContextMock.Setup(userContext => userContext.GetCurrentUser())
+            .Returns(new CurrentUser(userId, null, null));
+
         var repositoryMock = new Mock<IDeckRepository>();
-        repositoryMock.Setup(repo => repo.GetDecksAsync())
+        repositoryMock.Setup(repo => repo.GetDecksByUserIdAsync(userId))
             .ReturnsAsync(decks);
-        
+
         var mapperMock = new Mock<IMapper>();
         mapperMock.Setup(mapper => mapper.Map<IEnumerable<MinimalDeckDto>>(decks))
             .Returns(minimalDeckDtos);
-        
+
         var request = new GetDecksQuery();
 
-        var handler = new GetDecksQueryHandler(loggerMock.Object, repositoryMock.Object, mapperMock.Object);
+        var handler = new GetDecksQueryHandler(loggerMock.Object, repositoryMock.Object, mapperMock.Object, userContextMock.Object);
 
         var results = await handler.Handle(request, CancellationToken.None);
 
         results.Should().NotBeNull();
         results.Should().BeEquivalentTo(minimalDeckDtos);
-        repositoryMock.Verify(repo => repo.GetDecksAsync(), Times.Once);
+        repositoryMock.Verify(repo => repo.GetDecksByUserIdAsync(userId), Times.Once);
         mapperMock.Verify(mapper => mapper.Map<IEnumerable<MinimalDeckDto>>(decks), Times.Once);
     }
 }

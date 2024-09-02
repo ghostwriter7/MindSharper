@@ -19,6 +19,9 @@ public class DeckController(IMediator mediator) : ControllerBase
     [HttpGet("{deckId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]   
+    [Authorize]
     public async Task<ActionResult<DeckDto?>> GetDeckById([FromRoute] int deckId)
     {
         var deckDto = await mediator.Send(new GetDeckByIdQuery(deckId));
@@ -27,6 +30,8 @@ public class DeckController(IMediator mediator) : ControllerBase
 
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]   
+    [Authorize]
     public async Task<ActionResult<IEnumerable<MinimalDeckDto>>> GetDecks()
     {
         var deckDtos = await mediator.Send(new GetDecksQuery());
@@ -36,7 +41,8 @@ public class DeckController(IMediator mediator) : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]   
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [Authorize]
     public async Task<IActionResult> CreateDeck([FromBody] CreateDeckCommand command)
     {
@@ -47,6 +53,8 @@ public class DeckController(IMediator mediator) : ControllerBase
     [HttpPatch("name")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]   
     public async Task<IActionResult> UpdateDeckName([FromBody] UpdateDeckNameCommand command)
     {
         await mediator.Send(command);
@@ -56,6 +64,8 @@ public class DeckController(IMediator mediator) : ControllerBase
     [HttpDelete("{deckId:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]   
     [Authorize]
     public async Task<IActionResult> DeleteDeck([FromRoute] int deckId)
     {

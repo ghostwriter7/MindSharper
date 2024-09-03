@@ -56,6 +56,8 @@ public class FlashcardController(IMediator mediator) : ControllerBase
     [HttpPatch]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [Authorize]
     public async Task<IActionResult> UpdateFlashcard([FromRoute] int deckId, [FromBody] UpdateFlashcardCommand command)
     {
         command.DeckId = deckId;

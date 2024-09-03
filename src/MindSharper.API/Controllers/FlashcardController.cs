@@ -19,7 +19,8 @@ public class FlashcardController(IMediator mediator) : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [Authorize]
-    public async Task<ActionResult<int>> CreateFlashcard([FromRoute] int deckId, [FromBody] CreateFlashcardCommand command)
+    public async Task<ActionResult<int>> CreateFlashcard([FromRoute] int deckId,
+        [FromBody] CreateFlashcardCommand command)
     {
         command.DeckId = deckId;
         var flashcardId = await mediator.Send(command);
@@ -47,6 +48,8 @@ public class FlashcardController(IMediator mediator) : ControllerBase
     [HttpDelete("{flashcardId:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [Authorize]
     public async Task<IActionResult> DeleteFlashcard([FromRoute] int deckId, [FromRoute] int flashcardId)
     {
         await mediator.Send(new DeleteFlashcardCommand(deckId, flashcardId));

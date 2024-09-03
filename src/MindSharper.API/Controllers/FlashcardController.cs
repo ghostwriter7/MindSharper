@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MindSharper.Application.Flashcards.Commands.CreateFlashcard;
 using MindSharper.Application.Flashcards.Commands.DeleteFlashcard;
@@ -16,6 +17,8 @@ public class FlashcardController(IMediator mediator) : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [Authorize]
     public async Task<ActionResult<int>> CreateFlashcard([FromRoute] int deckId, [FromBody] CreateFlashcardCommand command)
     {
         command.DeckId = deckId;

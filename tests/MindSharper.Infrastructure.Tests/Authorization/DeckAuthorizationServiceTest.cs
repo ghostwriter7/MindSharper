@@ -18,10 +18,12 @@ public class DeckAuthorizationServiceTest
     private readonly Mock<IUserContext> _userContextMock = new();
     private readonly Mock<ILogger<DeckAuthorizationService>> _loggerMock = new();
     private readonly IResourceAuthorizationService<Deck> _resourceAuthorizationService;
-
+    private readonly CurrentUser _currentUser = new CurrentUser(Guid.NewGuid().ToString(), null, null);
     public DeckAuthorizationServiceTest()
     {
         _resourceAuthorizationService = new DeckAuthorizationService(_loggerMock.Object, _userContextMock.Object);
+        _userContextMock.Setup(userContext => userContext.GetCurrentUser())
+            .Returns(_currentUser);
     }
 
     [Theory]
@@ -30,12 +32,8 @@ public class DeckAuthorizationServiceTest
     [InlineData(ResourceOperation.Update)]
     public void IsAuthorized_ForDeckOwner_ShouldReturnTrue(ResourceOperation operation)
     {
-        var userId = Guid.NewGuid().ToString();
-        var deck = new Deck() { UserId = userId };
-        var currentUser = new CurrentUser(userId, null, null);
-        _userContextMock.Setup(userContext => userContext.GetCurrentUser())
-            .Returns(currentUser);
-
+        var deck = new Deck() { UserId = _currentUser.Id };
+        
         var result = _resourceAuthorizationService.IsAuthorized(deck, operation);
 
         result.Should().BeTrue();
@@ -55,10 +53,7 @@ public class DeckAuthorizationServiceTest
     public void IsAuthorized_ForNonDeckOwner_ShouldReturnFalse(ResourceOperation operation)
     {
         var deck = new Deck() { UserId = Guid.NewGuid().ToString() };
-        var currentUser = new CurrentUser(Guid.NewGuid().ToString(), null, null);
-        _userContextMock.Setup(userContext => userContext.GetCurrentUser())
-            .Returns(currentUser);
-
+        
         var result = _resourceAuthorizationService.IsAuthorized(deck, operation);
 
         result.Should().BeFalse();

@@ -6,15 +6,20 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using FluentAssertions;
 using JetBrains.Annotations;
+using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using MindSharper.API.Controllers;
 using MindSharper.Application.Flashcards.Commands.CreateFlashcard;
 using MindSharper.Application.Flashcards.Dtos;
+using MindSharper.Application.Users;
+using MindSharper.Domain.Constants;
 using MindSharper.Domain.Entities;
 using MindSharper.Domain.Exceptions;
+using MindSharper.Domain.Interfaces;
 using MindSharper.Domain.Repositories;
+using MindSharper.Infrastructure.Authorization;
 using Moq;
 using Xunit;
 
@@ -27,6 +32,8 @@ public class FlashcardControllerTest : IClassFixture<WebApplicationFactory<Progr
     private readonly Mock<IDeckRepository> _deckRepositoryMock = new();
     private readonly Mock<IFlashcardRepository> _flashcardRepositoryMock = new();
     private readonly HttpClient _client;
+    private readonly Mock<IUserContext> _userContextMock = new();
+    private readonly Mock<IResourceAuthorizationService<Deck>> _authorizationServiceMock = new();
     private const int _deckId = 1;
     private const int _flashcardId = 100;
 
@@ -36,11 +43,21 @@ public class FlashcardControllerTest : IClassFixture<WebApplicationFactory<Progr
         {
             builder.ConfigureServices(services =>
             {
+                services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+                services.Replace(ServiceDescriptor.Scoped<IUserContext>((_) => _userContextMock.Object));
+                services.Replace(
+                    ServiceDescriptor.Scoped<IResourceAuthorizationService<Deck>>((_) =>
+                        _authorizationServiceMock.Object));
                 services.Replace(ServiceDescriptor.Scoped<IDeckRepository>((_) => _deckRepositoryMock.Object));
                 services.Replace(
                     ServiceDescriptor.Scoped<IFlashcardRepository>((_) => _flashcardRepositoryMock.Object));
             });
         });
+        _userContextMock.Setup(userContext => userContext.GetCurrentUser())
+            .Returns(new CurrentUser(Guid.NewGuid().ToString(), null, null));
+        _authorizationServiceMock
+            .Setup(authService => authService.IsAuthorized(It.IsAny<Deck>(), It.IsAny<ResourceOperation>()))
+            .Returns(true);
         _client = _webApplicationFactory.CreateClient();
     }
 
@@ -127,7 +144,7 @@ public class FlashcardControllerTest : IClassFixture<WebApplicationFactory<Progr
     {
         _flashcardRepositoryMock.Setup(repo => repo.GetFlashcardByIdAsync(_deckId, _flashcardId))
             .Throws(() => new NotFoundException(nameof(Flashcard), _flashcardId.ToString()));
-        
+
         var results = await _client.GetAsync($"api/decks/{_deckId}/flashcards/{_flashcardId}");
 
         results.StatusCode.Should().Be(HttpStatusCode.NotFound);

@@ -12,6 +12,7 @@ using MindSharper.Domain.Entities;
 using MindSharper.Domain.Exceptions;
 using MindSharper.Domain.Interfaces;
 using MindSharper.Domain.Repositories;
+using MindSharper.Tests.Common.Helpers;
 using Moq;
 using Xunit;
 
@@ -28,6 +29,7 @@ public class DeleteFlashcardCommandHandlerTest
     private readonly Mock<IDeckRepository> _deckRepositoryMock = new();
     private readonly Mock<IResourceAuthorizationService<Deck>> _authorizationServiceMock = new();
     private readonly CurrentUser _currentUser = new CurrentUser(Guid.NewGuid().ToString(), null, null);
+    private const ResourceOperation _operation = ResourceOperation.Update;
 
     public DeleteFlashcardCommandHandlerTest()
     {
@@ -45,7 +47,7 @@ public class DeleteFlashcardCommandHandlerTest
     {
         var deck = DeckFixtures.GetAnyDeck();
         SetUpDeckRepository(deck);
-        SetUpAuthorizationService(deck, true);
+        SetupHelper.SetUpAuthorizationService(_authorizationServiceMock, deck, _operation, true);;
         var flashcard = FlashcardFixtures.GetAnyFlashcard();
         _flashcardRepositoryMock.Setup(repo => repo.GetFlashcardByIdAsync(_command.DeckId, _command.FlashcardId))
             .ReturnsAsync(flashcard);
@@ -54,7 +56,7 @@ public class DeleteFlashcardCommandHandlerTest
 
         action.Should().NotThrowAsync();
         _flashcardRepositoryMock.Verify(repo => repo.DeleteFlashcardAsync(flashcard), Times.Once);
-        _authorizationServiceMock.Verify(authService => authService.IsAuthorized(deck, ResourceOperation.Update), Times.Once);
+        _authorizationServiceMock.Verify(authService => authService.IsAuthorized(deck, _operation), Times.Once);
     }
 
     [Fact]
@@ -62,7 +64,7 @@ public class DeleteFlashcardCommandHandlerTest
     {
         var deck = DeckFixtures.GetAnyDeck();
         SetUpDeckRepository(deck);
-        SetUpAuthorizationService(deck, true);
+        SetupHelper.SetUpAuthorizationService(_authorizationServiceMock, deck, _operation, true);;
         _flashcardRepositoryMock.Setup(repo => repo.GetFlashcardByIdAsync(_command.DeckId, _command.FlashcardId))
             .ReturnsAsync((Flashcard)null);
 
@@ -72,7 +74,7 @@ public class DeleteFlashcardCommandHandlerTest
             .WithMessage($"Resource {nameof(Flashcard)} identified by {_command.FlashcardId} does not exist.");
         _flashcardRepositoryMock.Verify(repo => repo.GetFlashcardByIdAsync(_command.DeckId, _command.FlashcardId),
             Times.Once);
-        _authorizationServiceMock.Verify(authService => authService.IsAuthorized(deck, ResourceOperation.Update), Times.Once);
+        _authorizationServiceMock.Verify(authService => authService.IsAuthorized(deck, _operation), Times.Once);
         _flashcardRepositoryMock.Verify(repo => repo.DeleteFlashcardAsync(It.IsAny<Flashcard>()), Times.Never);
     }
 
@@ -81,18 +83,15 @@ public class DeleteFlashcardCommandHandlerTest
     {
         var deck = DeckFixtures.GetAnyDeck();
         SetUpDeckRepository(deck);
-        SetUpAuthorizationService(deck, false);
+        SetupHelper.SetUpAuthorizationService(_authorizationServiceMock, deck, _operation, false);
 
         var action = async () => await _handler.Handle(_command, CancellationToken.None);
 
         action.Should().ThrowAsync<UnauthorizedException>();
-        _authorizationServiceMock.Verify(authService => authService.IsAuthorized(deck, ResourceOperation.Update), Times.Once);
+        _authorizationServiceMock.Verify(authService => authService.IsAuthorized(deck, _operation), Times.Once);
         _flashcardRepositoryMock.Verify(repo => repo.DeleteFlashcardAsync(It.IsAny<Flashcard>()), Times.Never);
     }
-
-    private void SetUpAuthorizationService([CanBeNull] Deck deck, bool result) => _authorizationServiceMock
-        .Setup(authService => authService.IsAuthorized(deck, ResourceOperation.Update)).Returns(result);
-
+    
     private void SetUpDeckRepository([CanBeNull] Deck deck) => _deckRepositoryMock
         .Setup(repo => repo.GetDeckByIdAsync(_command.DeckId)).ReturnsAsync(deck);
 }

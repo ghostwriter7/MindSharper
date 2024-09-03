@@ -15,6 +15,7 @@ using MindSharper.Domain.Entities;
 using MindSharper.Domain.Exceptions;
 using MindSharper.Domain.Interfaces;
 using MindSharper.Domain.Repositories;
+using MindSharper.Tests.Common.Helpers;
 using Moq;
 using Xunit;
 
@@ -39,7 +40,8 @@ public class CreateFlashcardCommandHandlerTest
     private readonly Mock<IUserContext> _userContextMock = new();
     private readonly Mock<IResourceAuthorizationService<Deck>> _authorizationServiceMock = new();
     private readonly CurrentUser _currentUser = new CurrentUser(Guid.NewGuid().ToString(), null, null);
-
+    private const ResourceOperation _operation = ResourceOperation.Update;
+    
     public CreateFlashcardCommandHandlerTest()
     {
         var mapperConfig = new MapperConfiguration(config => config.AddProfile<FlashcardProfile>());
@@ -56,7 +58,7 @@ public class CreateFlashcardCommandHandlerTest
         const int flashcardId = 100;
         var deck = new Deck() { UserId = _currentUser.Id };
         SetUpDeckRepository(deck);
-        SetUpAuthorizationService(deck, true);
+        SetupHelper.SetUpAuthorizationService(_authorizationServiceMock, deck, _operation, true);;
         _flashcardRepositoryMock.Setup(repo => repo.CreateFlashcardAsync(It.IsAny<Flashcard>()))
             .ReturnsAsync(flashcardId);
 
@@ -65,7 +67,7 @@ public class CreateFlashcardCommandHandlerTest
         result.Should().Be(flashcardId);
         _deckRepositoryMock.Verify(repo => repo.GetDeckByIdAsync(_command.DeckId), Times.Once);
         _flashcardRepositoryMock.Verify(repo => repo.CreateFlashcardAsync(It.IsAny<Flashcard>()), Times.Once);
-        _authorizationServiceMock.Verify(authService => authService.IsAuthorized(deck, ResourceOperation.Update),
+        _authorizationServiceMock.Verify(authService => authService.IsAuthorized(deck, _operation),
             Times.Once);
     }
 
@@ -88,7 +90,7 @@ public class CreateFlashcardCommandHandlerTest
     {
         var deck = new Deck() { UserId = _currentUser.Id };
         SetUpDeckRepository(deck);
-        SetUpAuthorizationService(deck, true);
+        SetupHelper.SetUpAuthorizationService(_authorizationServiceMock, deck, _operation, true);;
 
         var dbExceptionMock = new Mock<DbException>();
         dbExceptionMock.Setup(exception => exception.Message).Returns("duplicate key");
@@ -104,7 +106,7 @@ public class CreateFlashcardCommandHandlerTest
 
         _deckRepositoryMock.Verify(repo => repo.GetDeckByIdAsync(_command.DeckId), Times.Once);
         _flashcardRepositoryMock.Verify(repo => repo.CreateFlashcardAsync(It.IsAny<Flashcard>()), Times.Once);
-        _authorizationServiceMock.Verify(authService => authService.IsAuthorized(deck, ResourceOperation.Update),
+        _authorizationServiceMock.Verify(authService => authService.IsAuthorized(deck, _operation),
             Times.Once);
     }
 
@@ -113,13 +115,13 @@ public class CreateFlashcardCommandHandlerTest
     {
         var deck = new Deck() { UserId = Guid.NewGuid().ToString() };
         SetUpDeckRepository(deck);
-        SetUpAuthorizationService(deck, false);
+        SetupHelper.SetUpAuthorizationService(_authorizationServiceMock, deck, _operation, false);
 
         Func<Task> action = async () => await _handler.Handle(_command, CancellationToken.None);
 
         action.Should().ThrowAsync<UnauthorizedException>();
 
-        _authorizationServiceMock.Verify(authService => authService.IsAuthorized(deck, ResourceOperation.Update),
+        _authorizationServiceMock.Verify(authService => authService.IsAuthorized(deck, _operation),
             Times.Once);
         _flashcardRepositoryMock.Verify(repo => repo.CreateFlashcardAsync(It.IsAny<Flashcard>()), Times.Never);
     }
@@ -128,11 +130,5 @@ public class CreateFlashcardCommandHandlerTest
     {
         _deckRepositoryMock.Setup(repo => repo.GetDeckByIdAsync(_command.DeckId))
             .ReturnsAsync(deck);
-    }
-
-    private void SetUpAuthorizationService([CanBeNull] Deck deck, bool result)
-    {
-        _authorizationServiceMock.Setup(authService => authService.IsAuthorized(deck, ResourceOperation.Update))
-            .Returns(result);
     }
 }

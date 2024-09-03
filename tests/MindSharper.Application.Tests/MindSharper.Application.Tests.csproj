@@ -22,6 +22,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\MindSharper.Application\MindSharper.Application.csproj" />
     <ProjectReference Include="..\..\src\MindSharper.Infrastructure\MindSharper.Infrastructure.csproj" />
+    <ProjectReference Include="..\MindSharper.Tests.Common\MindSharper.Tests.Common.csproj" />
   </ItemGroup>
   
 </Project>

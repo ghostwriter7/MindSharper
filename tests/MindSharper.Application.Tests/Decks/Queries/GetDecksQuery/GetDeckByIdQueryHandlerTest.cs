@@ -14,6 +14,7 @@ using MindSharper.Domain.Exceptions;
 using MindSharper.Domain.Interfaces;
 using MindSharper.Domain.Repositories;
 using MindSharper.Infrastructure.Authorization;
+using MindSharper.Tests.Common.Helpers;
 using Moq;
 using Xunit;
 
@@ -50,8 +51,7 @@ public class GetDeckByIdQueryHandlerTest
 
         _userContextMock.Setup(userContext => userContext.GetCurrentUser())
             .Returns(new CurrentUser(userId, null, null));
-        _deckRepositoryMock.Setup(repo => repo.GetDeckByIdAsync(_query.DeckId))
-            .ReturnsAsync(deck);
+        SetupHelper.SetUpGetDeckByIdAsync(_deckRepositoryMock, _query.DeckId, deck);
         _mapperMock.Setup(mapper => mapper.Map<DeckDto>(deck))
             .Returns(deckDto);
 
@@ -68,8 +68,7 @@ public class GetDeckByIdQueryHandlerTest
     {
         _userContextMock.Setup(userContext => userContext.GetCurrentUser())
             .Returns(new CurrentUser(Guid.NewGuid().ToString(), null, null));
-        _deckRepositoryMock.Setup(repo => repo.GetDeckByIdAsync(_deckId))
-            .ReturnsAsync((Deck)null);
+        SetupHelper.SetUpGetDeckByIdAsync(_deckRepositoryMock, _query.DeckId, null);
 
         Func<Task> action = async () => await _handler.Handle(_query, CancellationToken.None);
         action.Should()
@@ -88,8 +87,7 @@ public class GetDeckByIdQueryHandlerTest
         var deckDto = DeckFixtures.GetDeckDtoFromDeck(deck);
         _userContextMock.Setup(userContext => userContext.GetCurrentUser())
             .Returns(new CurrentUser(Guid.NewGuid().ToString(), null, null));
-        _deckRepositoryMock.Setup(repo => repo.GetDeckByIdAsync(_deckId))
-            .ReturnsAsync(deck);
+        SetupHelper.SetUpGetDeckByIdAsync(_deckRepositoryMock, _query.DeckId, deck);
 
         Func<Task> action = async () => await _handler.Handle(_query, CancellationToken.None);
         action.Should()

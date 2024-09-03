@@ -20,6 +20,7 @@ using MindSharper.Application.Users;
 using MindSharper.Domain.Entities;
 using MindSharper.Domain.Repositories;
 using MindSharper.Infrastructure.Authorization;
+using MindSharper.Tests.Common.Helpers;
 using Moq;
 using Xunit;
 
@@ -32,13 +33,13 @@ public class DeckControllerTest : IClassFixture<WebApplicationFactory<Program>>
     private readonly Mock<IDeckRepository> _deckRepositoryMock = new();
     private readonly HttpClient _client;
     private readonly CurrentUser _currentUser = new CurrentUser(Guid.NewGuid().ToString(), null, null);
-    
+
     public DeckControllerTest(WebApplicationFactory<Program> webApplicationFactory)
     {
         var userContextMock = new Mock<IUserContext>();
         userContextMock.Setup(userContext => userContext.GetCurrentUser())
             .Returns(_currentUser);
-        
+
         _webApplicationFactory = webApplicationFactory.WithWebHostBuilder(builder =>
         {
             builder.ConfigureServices(services =>
@@ -65,7 +66,7 @@ public class DeckControllerTest : IClassFixture<WebApplicationFactory<Program>>
             Rate = 3,
             UserId = _currentUser.Id
         };
-        _deckRepositoryMock.Setup(repo => repo.GetDeckByIdAsync(deck.Id)).ReturnsAsync(deck);
+        SetupHelper.SetUpGetDeckByIdAsync(_deckRepositoryMock, deck.Id, deck);
 
         var result = await _client.GetAsync($"api/decks/{deck.Id}");
         var content = await result.Content.ReadFromJsonAsync<DeckDto>();
@@ -85,7 +86,7 @@ public class DeckControllerTest : IClassFixture<WebApplicationFactory<Program>>
     [Fact]
     public async Task GetDeckById_ForNonExistingResource_ShouldReturn404NotFound()
     {
-        _deckRepositoryMock.Setup(repo => repo.GetDeckByIdAsync(1)).ReturnsAsync((Deck)null);
+        SetupHelper.SetUpGetDeckByIdAsync(_deckRepositoryMock, 1, null);
 
         var result = await _client.GetAsync("api/decks/1");
 
@@ -122,7 +123,7 @@ public class DeckControllerTest : IClassFixture<WebApplicationFactory<Program>>
 
         result.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
-    
+
     [Fact]
     public async Task CreateDeck_ForExistingResourceWithTheSameName_ShouldReturn400BadRequest()
     {
@@ -141,20 +142,19 @@ public class DeckControllerTest : IClassFixture<WebApplicationFactory<Program>>
     public async Task DeleteDeck_ForExistingResource_ShouldReturn204NoContet()
     {
         var deckId = 100;
-        _deckRepositoryMock.Setup(repo => repo.GetDeckByIdAsync(deckId))
-            .ReturnsAsync(new Deck() { Id = deckId, UserId = _currentUser.Id});
+        SetupHelper.SetUpGetDeckByIdAsync(_deckRepositoryMock, deckId,
+            new Deck() { Id = deckId, UserId = _currentUser.Id });
 
         var result = await _client.DeleteAsync($"api/decks/{deckId}");
 
         result.StatusCode.Should().Be(HttpStatusCode.NoContent);
     }
-    
+
     [Fact]
     public async Task DeleteDeck_ForNonExistingResource_ShouldReturn404NotFound()
     {
         var deckId = 100;
-        _deckRepositoryMock.Setup(repo => repo.GetDeckByIdAsync(deckId))
-            .ReturnsAsync((Deck) null);
+        SetupHelper.SetUpGetDeckByIdAsync(_deckRepositoryMock, deckId, null);
 
         var result = await _client.DeleteAsync($"api/decks/{deckId}");
 

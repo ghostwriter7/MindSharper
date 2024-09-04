@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using MindSharper.API.Controllers;
 using MindSharper.Application.Flashcards.Commands.CreateFlashcard;
+using MindSharper.Application.Flashcards.Commands.UpdateFlashcard;
 using MindSharper.Application.Flashcards.Dtos;
 using MindSharper.Application.Users;
 using MindSharper.Domain.Constants;
@@ -20,6 +21,7 @@ using MindSharper.Domain.Exceptions;
 using MindSharper.Domain.Interfaces;
 using MindSharper.Domain.Repositories;
 using MindSharper.Infrastructure.Authorization;
+using MindSharper.Tests.Common.Helpers;
 using Moq;
 using Xunit;
 
@@ -82,7 +84,7 @@ public class FlashcardControllerTest : IClassFixture<WebApplicationFactory<Progr
     }
 
     [Fact]
-    public async Task CreateFlashcard_ForNonExistingFlashcardId_ShouldReturn404NotFound()
+    public async Task CreateFlashcard_ForNonExistingDeckId_ShouldReturn404NotFound()
     {
         var command = new CreateFlashcardCommand()
         {
@@ -98,7 +100,7 @@ public class FlashcardControllerTest : IClassFixture<WebApplicationFactory<Progr
     }
 
     [Fact]
-    public async Task CreateFlashcard_ForInvalidRequest_ShouldReturn400BadRequest()
+    public async Task CreateFlashcard_ForRequestWithADuplicatedFlashcard_ShouldReturn400BadRequest()
     {
         var command = new CreateFlashcardCommand()
         {
@@ -115,6 +117,81 @@ public class FlashcardControllerTest : IClassFixture<WebApplicationFactory<Progr
         var results = await _client.PostAsync($"api/decks/{_deckId}/flashcards", JsonContent.Create(command));
 
         results.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task UpdateFlashcard_ForValidRequest_ShouldReturn204NoContent()
+    {
+        var currentUser = new CurrentUser(Guid.NewGuid().ToString(), null, null);
+        SetupHelper.SetUpUserContext(_userContextMock, currentUser);
+        SetupHelper.SetUpGetDeckByIdAsync(_deckRepositoryMock, _deckId,
+            new Deck() { UserId = currentUser.Id, Id = _deckId });
+        SetupHelper.SetUpGetFlashcardByIdAsync(_flashcardRepositoryMock, _deckId, _flashcardId,
+            new Flashcard() { Frontside = "Some question", Backside = "Some answer" });
+
+        var result = await _client.PatchAsync($"api/decks/{_deckId}/flashcards", JsonContent.Create(new UpdateFlashcardCommand()
+        {
+            Frontside = "New question",
+            Backside = "New answer",
+            FlashcardId = _flashcardId
+        }));
+
+        result.StatusCode.Should().Be(HttpStatusCode.NoContent);
+    }
+
+    [Fact]
+    public async Task UpdateFlashcard_ForNonExistingDeckId_ShouldReturn404NotFound()
+    {
+        var currentUser = new CurrentUser(Guid.NewGuid().ToString(), null, null);
+        SetupHelper.SetUpUserContext(_userContextMock, currentUser);
+        SetupHelper.SetUpGetDeckByIdAsync(_deckRepositoryMock, _deckId, null);
+
+        var result = await _client.PatchAsync($"api/decks/{_deckId}/flashcards", JsonContent.Create(new UpdateFlashcardCommand()
+        {
+            Frontside = "New question",
+            Backside = "New answer",
+            FlashcardId = _flashcardId
+        }));
+
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task UpdateFlashcard_ForNonExistingFlashcardId_ShouldReturn404NotFound()
+    {
+        var currentUser = new CurrentUser(Guid.NewGuid().ToString(), null, null);
+        SetupHelper.SetUpUserContext(_userContextMock, currentUser);
+        SetupHelper.SetUpGetDeckByIdAsync(_deckRepositoryMock, _deckId,
+            new Deck() { UserId = currentUser.Id, Id = _deckId });
+        SetupHelper.SetUpGetFlashcardByIdAsync(_flashcardRepositoryMock, _deckId, _flashcardId, null);
+
+        var result = await _client.PatchAsync($"api/decks/{_deckId}/flashcards", JsonContent.Create(new UpdateFlashcardCommand()
+        {
+            Frontside = "New question",
+            Backside = "New answer",
+            FlashcardId = _flashcardId
+        }));
+
+        result.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task UpdateFlashcard_ForFlashcardBelongingToAnotherUser_ShouldReturn403Forbidden()
+    {
+        var currentUser = new CurrentUser(Guid.NewGuid().ToString(), null, null);
+        SetupHelper.SetUpUserContext(_userContextMock, currentUser);
+        var deck = new Deck() { UserId = Guid.NewGuid().ToString(), Id = _deckId };
+        SetupHelper.SetUpGetDeckByIdAsync(_deckRepositoryMock, _deckId, deck);
+        SetupHelper.SetUpAuthorizationService(_authorizationServiceMock, deck, ResourceOperation.Update, false);
+
+        var result = await _client.PatchAsync($"api/decks/{_deckId}/flashcards", JsonContent.Create(new UpdateFlashcardCommand()
+        {
+            Frontside = "New question",
+            Backside = "New answer",
+            FlashcardId = _flashcardId
+        }));
+
+        result.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
     [Fact]

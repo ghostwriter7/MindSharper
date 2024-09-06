@@ -96,9 +96,9 @@ public class DeckControllerTest : IClassFixture<WebApplicationFactory<Program>>
     [Fact]
     public async Task GetDecks_ForValidRequest_ShouldReturn200Ok()
     {
-        _deckRepositoryMock.Setup(repo => repo.GetDecksByUserIdAsync(It.IsAny<string>())).ReturnsAsync([]);
+        _deckRepositoryMock.Setup(repo => repo.GetDecksByUserIdAsync(It.IsAny<string>(), 1, 5)).ReturnsAsync(([], 0));
 
-        var result = await _client.GetAsync("api/decks");
+        var result = await _client.GetAsync("api/decks?pageSize=5&pageNumber=1");
 
         result.StatusCode.Should().Be(HttpStatusCode.OK);
     }

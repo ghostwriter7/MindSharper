@@ -34,23 +34,25 @@ public class GetDecksQueryHandlerTest
         userContextMock.Setup(userContext => userContext.GetCurrentUser())
             .Returns(new CurrentUser(userId, null, null));
 
+        var request = new GetDecksQuery() { PageSize = 5, PageNumber = 1 };
+
         var repositoryMock = new Mock<IDeckRepository>();
-        repositoryMock.Setup(repo => repo.GetDecksByUserIdAsync(userId))
-            .ReturnsAsync(decks);
+        repositoryMock.Setup(repo => repo.GetDecksByUserIdAsync(userId, request.PageNumber, request.PageSize))
+            .ReturnsAsync((decks, 1));
 
         var mapperMock = new Mock<IMapper>();
         mapperMock.Setup(mapper => mapper.Map<IEnumerable<MinimalDeckDto>>(decks))
             .Returns(minimalDeckDtos);
 
-        var request = new GetDecksQuery();
 
-        var handler = new GetDecksQueryHandler(loggerMock.Object, repositoryMock.Object, mapperMock.Object, userContextMock.Object);
+        var handler = new GetDecksQueryHandler(loggerMock.Object, repositoryMock.Object, mapperMock.Object,
+            userContextMock.Object);
 
         var results = await handler.Handle(request, CancellationToken.None);
 
         results.Should().NotBeNull();
         results.Should().BeEquivalentTo(minimalDeckDtos);
-        repositoryMock.Verify(repo => repo.GetDecksByUserIdAsync(userId), Times.Once);
+        repositoryMock.Verify(repo => repo.GetDecksByUserIdAsync(userId, request.PageNumber, request.PageSize), Times.Once);
         mapperMock.Verify(mapper => mapper.Map<IEnumerable<MinimalDeckDto>>(decks), Times.Once);
     }
 }

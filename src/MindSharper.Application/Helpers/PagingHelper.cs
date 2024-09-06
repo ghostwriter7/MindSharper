@@ -7,7 +7,7 @@ namespace MindSharper.Application.Helpers;
 
 public static class PagingHelper
 {
-    public static PagedResult<T> GetPagedResult<T>(IEnumerable<T> results, int total,  PagedQuery<PagedResult<T>> query)
+    public static PagedResult<T> GetPagedResult<T>(IEnumerable<T> results, int total,  IPagedQuery query)
     {
         return new PagedResult<T>(
             results,

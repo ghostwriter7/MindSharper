@@ -1,6 +1,6 @@
 @MindSharper.API_HostAddress = http://localhost:5273
 
-GET {{MindSharper.API_HostAddress}}/api/decks/
+GET {{MindSharper.API_HostAddress}}/api/decks/?pageSize=2&pageNumber=1
 Accept: application/json
 
 ###

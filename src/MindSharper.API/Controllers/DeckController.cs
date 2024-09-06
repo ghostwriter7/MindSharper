@@ -20,7 +20,7 @@ public class DeckController(IMediator mediator) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]   
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [Authorize]
     public async Task<ActionResult<DeckDto?>> GetDeckById([FromRoute] int deckId)
     {
@@ -30,18 +30,19 @@ public class DeckController(IMediator mediator) : ControllerBase
 
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]   
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [Authorize]
-    public async Task<ActionResult<IEnumerable<MinimalDeckDto>>> GetDecks()
+    public async Task<ActionResult<IEnumerable<MinimalDeckDto>>> GetDecks([FromQuery] int pageSize,
+        [FromQuery] int pageNumber)
     {
-        var deckDtos = await mediator.Send(new GetDecksQuery());
+        var deckDtos = await mediator.Send(new GetDecksQuery() { PageSize = pageSize, PageNumber = pageNumber });
         return Ok(deckDtos);
     }
 
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]   
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [Authorize]
     public async Task<IActionResult> CreateDeck([FromBody] CreateDeckCommand command)
@@ -54,7 +55,7 @@ public class DeckController(IMediator mediator) : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]   
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [Authorize]
     public async Task<IActionResult> UpdateDeckName([FromBody] UpdateDeckNameCommand command)
     {
@@ -66,7 +67,7 @@ public class DeckController(IMediator mediator) : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]   
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [Authorize]
     public async Task<IActionResult> DeleteDeck([FromRoute] int deckId)
     {

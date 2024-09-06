@@ -16,10 +16,21 @@ internal class DeckRepository(MindSharperDatabaseContext context) : BaseReposito
         return deck;
     }
 
-    public async Task<IEnumerable<Deck>> GetDecksByUserIdAsync(string userId)
+    public async Task<(IEnumerable<Deck>, int)> GetDecksByUserIdAsync(string userId, int pageNumber, int pageSize)
     {
-        var decks = await context.Decks.Where(deck => deck.UserId == userId).ToListAsync();
-        return decks;
+        var baseQuery = context.Decks.Where(deck => deck.UserId == userId);
+
+        var total = await baseQuery.CountAsync();
+
+        if (total == 0)
+            return ([], 0);
+        
+        var decks = await baseQuery
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+        
+        return (decks, total);
     }
 
     public async Task<int> CreateDeckAsync(Deck deck)

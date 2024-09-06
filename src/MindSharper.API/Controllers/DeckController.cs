@@ -32,10 +32,9 @@ public class DeckController(IMediator mediator) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [Authorize]
-    public async Task<ActionResult<IEnumerable<MinimalDeckDto>>> GetDecks([FromQuery] int pageSize,
-        [FromQuery] int pageNumber)
+    public async Task<ActionResult<IEnumerable<MinimalDeckDto>>> GetDecks([FromQuery] GetDecksQuery getDecksQuery)
     {
-        var deckDtos = await mediator.Send(new GetDecksQuery() { PageSize = pageSize, PageNumber = pageNumber });
+        var deckDtos = await mediator.Send(getDecksQuery);
         return Ok(deckDtos);
     }
 

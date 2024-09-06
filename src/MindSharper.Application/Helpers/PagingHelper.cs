@@ -1,4 +1,5 @@
 ﻿using MindSharper.Application.Common;
+using MindSharper.Application.Common.PagedQuery;
 using MindSharper.Application.Decks.Dtos;
 using MindSharper.Application.Decks.Queries.GetDecks;
 

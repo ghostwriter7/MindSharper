@@ -1,7 +1,9 @@
 @MindSharper.API_HostAddress = http://localhost:5273
+@AccessToken = CfDJ8BjnyNePyPFIo4je5y5RYUo_8yocL5DDWATPed7D7ycAYv9cD31t6q5zo3_Bqh7h3sFEDyi__dB-GKVPApl8brSm0djcP5NxGKNVoO4b1zFXNvjwxQl80p6iBQDBnXX6_poQx0G3f_YEdCpuIVY2rHCCCQbrUiwpxXntMm9hZC8P4RbEb45oPEkPDrgePrwslUbnwG36EId25cHwaKz_v2P8oTAiRCVOPt7G-u2u-0X3HsO901Eh8qujghTKQKTrnBiljmQzUSe8NZJ9VhXuxc7Qa-c8PlfNzWVQR355Af96W6_aMpT2VC42kNgPaf1MMdPz7GbhQJ5ypgu4bPXud9tfCCqvCvGFoe8p8dr7LSVAUi5gNmR8P2jT7IQTm_Kc0mQ0ZFaZPbEYbJ7Y3Jrh2Eon-6nGywXZRCKm7y0uioYGeTZD-D4YosV6XEUts0DWr933nsmgGe93RbpSlbrLJQQ5-gmMEEJlutuFBQ9KqP4r8J4dGwUT6dGKTacecixfZT5I31cOIfm1tuZ-tOQ23h8gfwftLEkubZaNF5_qu_ip7FuyHyvqL-Njy9mQdBNtEd5yfSofH-UdSrUxnyJX04CgpmI8DTUmM3DUqXJRKMpZmabawAiz0OPoO9Kl4HiBUh5ne_-1L1cZD7IoSJCY0SCECwhF-7G-_YC2cx1rqnqvYPhX8v5qGK4-g8_cduFXdg
 
-GET {{MindSharper.API_HostAddress}}/api/decks/?pageSize=2&pageNumber=1
+GET {{MindSharper.API_HostAddress}}/api/decks?pageSize=5&pageNumber=1
 Accept: application/json
+Authorization: Bearer {{ AccessToken }} 
 
 ###
 
@@ -42,4 +44,13 @@ Content-Type: application/json
 {
   "frontside": "Explain keyword 'in'",
   "backside": "1. pass valuetypes by reference (e.g. structs) 2. reference is readonly"
+}
+
+###
+POST {{MindSharper.API_HostAddress}}/api/identity/login
+Content-Type: application/json
+
+{
+  "email": "admin@admin.com",
+  "password": "Password123!"
 }

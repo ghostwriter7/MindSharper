@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\MindSharper.API\MindSharper.API.csproj" />
+    <ProjectReference Include="..\..\src\MindSharper.Presentation\MindSharper.Presentation.API\MindSharper.Presentation.API.csproj" />
     <ProjectReference Include="..\..\src\MindSharper.Application\MindSharper.Application.csproj" />
     <ProjectReference Include="..\..\src\MindSharper.Infrastructure\MindSharper.Infrastructure.csproj" />
     <ProjectReference Include="..\MindSharper.Tests.Common\MindSharper.Tests.Common.csproj" />

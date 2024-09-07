@@ -6,13 +6,13 @@ using FluentAssertions;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using MindSharper.API.Middlewares;
+using MindSharper.Presentation.API.Middlewares;
 using MindSharper.Domain.Entities;
 using MindSharper.Domain.Exceptions;
 using Moq;
 using Xunit;
 
-namespace MindSharper.API.Tests.Middlewares;
+namespace MindSharper.Presentation.API.Tests.Middlewares;
 
 [TestSubject(typeof(ErrorHandlingMiddleware))]
 public class ErrorHandlingMiddlewareTest

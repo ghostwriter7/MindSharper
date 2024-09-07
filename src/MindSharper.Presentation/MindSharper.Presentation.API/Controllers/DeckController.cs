@@ -10,7 +10,7 @@ using MindSharper.Application.Decks.Queries.GetDeckByIdQuery;
 using MindSharper.Application.Decks.Queries.GetDecks;
 using MindSharper.Domain.Entities;
 
-namespace MindSharper.API.Controllers;
+namespace MindSharper.Presentation.API.Controllers;
 
 [ApiController]
 [Route("api/decks")]

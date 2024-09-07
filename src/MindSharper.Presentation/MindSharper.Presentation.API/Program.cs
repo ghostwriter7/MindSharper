@@ -2,12 +2,12 @@ using Microsoft.OpenApi.Models;
 using MindSharper.Infrastructure.Extensions;
 using MindSharper.Infrastructure.Seeders;
 using MindSharper.Application.Extensions;
-using MindSharper.API.Extensions;
-using MindSharper.API.Middlewares;
+using MindSharper.Presentation.API.Extensions;
+using MindSharper.Presentation.API.Middlewares;
 using MindSharper.Domain.Entities;
 using Serilog;
 
-namespace MindSharper.API;
+namespace MindSharper.Presentation.API;
 
 public class Program
 {

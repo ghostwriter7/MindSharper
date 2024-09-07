@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using MindSharper.API.Controllers;
+using MindSharper.Presentation.API.Controllers;
 using MindSharper.Application.Flashcards.Commands.CreateFlashcard;
 using MindSharper.Application.Flashcards.Commands.UpdateFlashcard;
 using MindSharper.Application.Flashcards.Dtos;
@@ -25,7 +25,7 @@ using MindSharper.Tests.Common.Helpers;
 using Moq;
 using Xunit;
 
-namespace MindSharper.API.Tests.Controllers;
+namespace MindSharper.Presentation.API.Tests.Controllers;
 
 [TestSubject(typeof(FlashcardController))]
 public class FlashcardControllerTest : IClassFixture<WebApplicationFactory<Program>>

@@ -1,8 +1,8 @@
 ﻿using Microsoft.OpenApi.Models;
-using MindSharper.API.Middlewares;
+using MindSharper.Presentation.API.Middlewares;
 using Serilog;
 
-namespace MindSharper.API.Extensions;
+namespace MindSharper.Presentation.API.Extensions;
 
 public static class ServiceCollectionsExtensions
 {

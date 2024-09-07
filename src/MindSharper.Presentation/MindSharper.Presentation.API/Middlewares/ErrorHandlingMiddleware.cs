@@ -1,6 +1,6 @@
 ﻿using MindSharper.Domain.Exceptions;
 
-namespace MindSharper.API.Middlewares;
+namespace MindSharper.Presentation.API.Middlewares;
 
 public class ErrorHandlingMiddleware(ILogger<ErrorHandlingMiddleware> logger) : IMiddleware
 {

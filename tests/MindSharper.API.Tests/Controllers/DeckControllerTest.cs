@@ -14,7 +14,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using MindSharper.API.Controllers;
+using MindSharper.Presentation.API.Controllers;
 using MindSharper.Application.Decks.Dtos;
 using MindSharper.Application.Users;
 using MindSharper.Domain.Entities;
@@ -24,7 +24,7 @@ using MindSharper.Tests.Common.Helpers;
 using Moq;
 using Xunit;
 
-namespace MindSharper.API.Tests.Controllers;
+namespace MindSharper.Presentation.API.Tests.Controllers;
 
 [TestSubject(typeof(DeckController))]
 public class DeckControllerTest : IClassFixture<WebApplicationFactory<Program>>

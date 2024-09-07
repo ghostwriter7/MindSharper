@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <ItemGroup>
-    <ProjectReference Include="..\MindSharper.Application\MindSharper.Application.csproj" />
-    <ProjectReference Include="..\MindSharper.Infrastructure\MindSharper.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\MindSharper.Application\MindSharper.Application.csproj" />
+    <ProjectReference Include="..\..\MindSharper.Infrastructure\MindSharper.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -18,6 +18,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>MindSharper.API</RootNamespace>
   </PropertyGroup>
 
 </Project>

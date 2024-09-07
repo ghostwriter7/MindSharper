@@ -8,7 +8,7 @@ using MindSharper.Application.Flashcards.Dtos;
 using MindSharper.Application.Flashcards.Queries.GetFlashcardById;
 using MindSharper.Application.Flashcards.Queries.GetFlashcards;
 
-namespace MindSharper.API.Controllers;
+namespace MindSharper.Presentation.API.Controllers;
 
 [ApiController]
 [Route("api/decks/{deckId:int}/flashcards")]

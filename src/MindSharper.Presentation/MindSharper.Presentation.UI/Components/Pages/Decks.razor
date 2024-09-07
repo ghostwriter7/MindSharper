@@ -1,44 +1,52 @@
 ﻿@page "/decks"
+@attribute [StreamRendering]
 @using System.Globalization
 @using Microsoft.VisualBasic
+@using MindSharper.Application.Common
 @using MindSharper.Application.Decks.Dtos
+@using MindSharper.Presentation.UI.Data
+@inject IDeckService deckService
 
 <PageTitle>MindSharper - Decks</PageTitle>
 
-<table class="table">
-    <thead>
-    <tr>
-        @foreach (var cellName in _cellNames)
-        {
-            <th scope="col">@cellName</th>
-        }
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (var (deck, index) in decks.Select((item, index) => (item, index + 1)))
-    {
+@if (pagedResult == null)
+{
+    <span>Loading decks...</span>
+}
+else
+{
+    <table class="table">
+        <thead>
         <tr>
-            <th scope="row">@index</th>
-            <td>@deck.Name</td>
-            <td>@deck.CreatedAt.ToString("yyyy-MM-dd")</td>
+            @foreach (var cellName in _cellNames)
+            {
+                <th scope="col">@cellName</th>
+            }
         </tr>
-    }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+        @foreach (var (deck, index) in pagedResult.Results.Select((item, index) => (item, index + 1)))
+        {
+            <tr>
+                <th scope="row">@index</th>
+                <td>@deck.Name</td>
+                <td>@deck.CreatedAt.ToString("yyyy-MM-dd")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    <footer>
+        Displaying items from @pagedResult.ItemFrom to @pagedResult.ItemTo. Total items: @pagedResult.TotalCount. Total pages: @pagedResult.TotalPages
+    </footer>
+}
 
 @code {
     private readonly string[] _cellNames = ["#", "Name", "Created At"];
-    private List<MinimalDeckDto> decks = new();
-    
-    protected override void OnInitialized()
+    private PagedResult<MinimalDeckDto> pagedResult;
+
+    protected override async Task OnInitializedAsync()
     {
-        
-        decks.AddRange(
-        [
-            new MinimalDeckDto() { Name = "C#", CreatedAt = new DateOnly(2024, 9, 1)},
-            new MinimalDeckDto() { Name = "Blazor", CreatedAt = new DateOnly(2024, 9, 1)},
-            new MinimalDeckDto() { Name = "Angular", CreatedAt = new DateOnly(2024, 9, 1)},
-        ]);
+        pagedResult = await deckService.GetDecksAsync();
     }
 
 }

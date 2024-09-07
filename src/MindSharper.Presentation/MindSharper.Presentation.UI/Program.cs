@@ -1,10 +1,14 @@
 using MindSharper.Presentation.UI.Components;
+using MindSharper.Presentation.UI.Components.Pages;
+using MindSharper.Presentation.UI.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddSingleton<IDeckService, DeckService>();
 
 var app = builder.Build();
 

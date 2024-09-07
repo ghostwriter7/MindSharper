@@ -10,4 +10,8 @@
     <_ContentIncludedByDefault Remove="Components\UI\Button.razor" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\MindSharper.Application\MindSharper.Application.csproj" />
+  </ItemGroup>
+
 </Project>

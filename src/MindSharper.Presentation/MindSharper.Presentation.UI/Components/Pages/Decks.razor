@@ -1,0 +1,44 @@
+﻿@page "/decks"
+@using System.Globalization
+@using Microsoft.VisualBasic
+@using MindSharper.Application.Decks.Dtos
+
+<PageTitle>MindSharper - Decks</PageTitle>
+
+<table class="table">
+    <thead>
+    <tr>
+        @foreach (var cellName in _cellNames)
+        {
+            <th scope="col">@cellName</th>
+        }
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var (deck, index) in decks.Select((item, index) => (item, index + 1)))
+    {
+        <tr>
+            <th scope="row">@index</th>
+            <td>@deck.Name</td>
+            <td>@deck.CreatedAt.ToString("yyyy-MM-dd")</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@code {
+    private readonly string[] _cellNames = ["#", "Name", "Created At"];
+    private List<MinimalDeckDto> decks = new();
+    
+    protected override void OnInitialized()
+    {
+        
+        decks.AddRange(
+        [
+            new MinimalDeckDto() { Name = "C#", CreatedAt = new DateOnly(2024, 9, 1)},
+            new MinimalDeckDto() { Name = "Blazor", CreatedAt = new DateOnly(2024, 9, 1)},
+            new MinimalDeckDto() { Name = "Angular", CreatedAt = new DateOnly(2024, 9, 1)},
+        ]);
+    }
+
+}

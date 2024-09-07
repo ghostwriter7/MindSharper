@@ -1,0 +1,10 @@
+﻿@using MindSharper.Application.Decks.Dtos
+
+<th scope="row">@Index</th>
+<td>@Deck.Name</td>
+<td>@Deck.CreatedAt.ToString("yyyy-MM-dd")</td>
+
+@code {
+    [Parameter] public int Index { get; set; }
+    [Parameter] public MinimalDeckDto Deck { get; set; }
+}

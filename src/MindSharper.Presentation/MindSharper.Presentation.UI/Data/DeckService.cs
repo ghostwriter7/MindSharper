@@ -1,16 +1,17 @@
 ﻿using MindSharper.Application.Decks.Dtos;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Components;
 using MindSharper.Application.Common;
 
 namespace MindSharper.Presentation.UI.Data;
 
-public class DeckService : IDeckService
+public class DeckService(IHttpClientFactory httpClientFactory) : IDeckService
 {
     public async Task<PagedResult<MinimalDeckDto>> GetDecksAsync()
     {
-        var client = new HttpClient();
-        client.DefaultRequestHeaders.Add("Authorization", "Bearer CfDJ8BjnyNePyPFIo4je5y5RYUqFQuoXoAtjOl86sW0ncHRE25TxTy3EWgu6u6vklriMm3hPRAG6jncTgKFHUiIpv-W7DIHx3ySgHwDr986SAAMqH9uUfDIFV_JgrfWhA_N2fId7km25xCr9eF9yYp0hNLgaoe7RBnDEvroLV1tbawBVFKkc-dHNIuHzOhs7o2c1gatpQgL0iCs_LnBUfXkvTMEiKmJmmsDn5X297mJ2zBBG3l8ROd757hpiduyKtTdksolfXyCCmdR5-tOKG2cXInFJd96S2ivkpC_S6u4PubdLp1KWixeWsWjoUef29gbtWPQQkOdszxIyzIh7BJr3WgfrjmiLc3ydrqV-M1hhMRc9T4FYJwQOgG9mbsqjiW9pV6UjR-GOxKwV3olILCkUGD7rt109IEJ8HJVhqKqSmrgZZmKxv75KM9BsOhYYrl_Hwk8ylhPZr1hZwAgE5HEqkO2h0bppUdT3rY3pT02Akkp6nnD10cw0KepJtgqlFRolBptNmFVVCyhi9746d1ZJ-1lLu8JV13M4W2RFexUS3COYo3T6uUaRDRZodtgQjqkH7MmwiUfLa0ZnTFRT_kp-kmi_N9vLrY5vMWKnmFJ490PHp4fRZ8uB2TBgyCPpbE1h85ACcnr6CdmH_aKi70mhCObWliKYb7BF7uJLvkwvTbOaNN8dU6IezhVkUl6k4XPQlA");
-        var pagedResult = await client.GetFromJsonAsync<PagedResult<MinimalDeckDto>>("http://localhost:5273/api/decks?pageNumber=1&pageSize=5");
+        using var httpClient = httpClientFactory.CreateClient();
+        httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer CfDJ8BjnyNePyPFIo4je5y5RYUp_iomKHDneQhxChvBzPwIZftrh6Oa0rTcszP2w4ESiSa0BmO54GMEn64ZuFVy7uLOV2SqVpJqSoRHH3h-_cC-jzI-jvp3vHQMl-Ri5P--3NxiSsskTr1AAND4dkq4fdmgXscrWrTONTsg-fTxq8--3hsKsIRBMC_zohYEk4OmfkEufK48M-kfDI_YZOwX9cVIKv1bP1IXTQ3_6ruFPGUOVnjI1Q5WE9kh0mp1_6KytU3-xFH7S6YTwHVqG-YkssjS7OPoKinbWAuCcDt1epAZtq5Ygzm8UXBQEmyIKDMXGQLFyIo3WaarzcP0cft22rq6iEMQvf_CabbsfElYNlR9POBIAFWHKgVYdy1aHQx1GmqNsss169o2mtc27RbJf54zCcNz3V61jxWMYobVmHVRcXwnf4xMZdgq2KwesvSVa9pMuGHdgX3S8uJlk1rhw38MpJvjwPcE4paNOmYumo9xuZmfAbHCO9RS1RX6mh6tVSmf5ct5tfR-3hvQ7Se4IHTatXW1WbttKKvhHtD46_4IZJNJcFtaUDMvCA5-mLDadBTwx-oj9qfBpoV6Pxh1H18sPXRZXQ4wOqbIzDPoKJ-oqo4AK5Obwb7NB1kAHV1h-heM6BJ0lJjCFL1cgswQ1mHhyjRmB4MEvp88xJH5F2BoGNJHJzmiyxVYwCWEuY1Gzbw");
+        var pagedResult = await httpClient.GetFromJsonAsync<PagedResult<MinimalDeckDto>>("http://localhost:5273/api/decks?pageNumber=1&pageSize=5");
         
         return pagedResult;
     }

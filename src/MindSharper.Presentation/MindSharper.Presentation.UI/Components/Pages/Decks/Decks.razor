@@ -1,0 +1,36 @@
+﻿@page "/decks"
+@attribute [StreamRendering]
+@using System.Globalization
+@using Microsoft.VisualBasic
+@using MindSharper.Application.Common
+@using MindSharper.Application.Decks.Dtos
+@using MindSharper.Presentation.UI.Data
+@using MindSharper.Presentation.UI.Components.UI;
+@inject IDeckService deckService
+
+<PageTitle>MindSharper - Decks</PageTitle>
+
+@if (pagedResult == null)
+{
+    <span>Loading decks...</span>
+}
+else
+{
+    <Table TItem="MinimalDeckDto" PagedResult="pagedResult" CellNames="_cellNames">
+        <ItemTemplate Context="deckTuple">
+            <DeckTableEntry Deck="deckTuple.Item1" Index="deckTuple.Item2"></DeckTableEntry>
+        </ItemTemplate>
+    </Table>
+}
+
+@code {
+    
+    private readonly string[] _cellNames = ["#", "Name", "Created At"];
+    private PagedResult<MinimalDeckDto> pagedResult;
+
+    protected override async Task OnInitializedAsync()
+    {
+        pagedResult = await deckService.GetDecksAsync();
+    }
+
+}

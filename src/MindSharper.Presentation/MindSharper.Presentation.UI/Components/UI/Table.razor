@@ -1,0 +1,31 @@
+﻿@using MindSharper.Application.Common
+@typeparam TItem
+
+<table class="table">
+    <thead>
+    <tr>
+        @foreach (var cellName in CellNames)
+        {
+            <th scope="col">@cellName</th>
+        }
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var (item, index) in PagedResult.Results.Select((item, index) => (item, index + 1)))
+    {
+        <tr>
+            @ItemTemplate((item, index))
+        </tr>
+    }
+    </tbody>
+</table>
+<footer>
+    Displaying items from @PagedResult.ItemFrom to @PagedResult.ItemTo. Total items: @PagedResult.TotalCount. Total pages: @PagedResult.TotalPages
+</footer>
+
+@code
+{
+    [Parameter] public PagedResult<TItem> PagedResult { get; set; }
+    [Parameter] public string[] CellNames { get; set; }
+    [Parameter] public RenderFragment<(TItem, int)> ItemTemplate { get; set; }
+}

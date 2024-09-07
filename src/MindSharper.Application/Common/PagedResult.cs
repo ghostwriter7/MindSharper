@@ -1,4 +1,6 @@
-﻿namespace MindSharper.Application.Common;
+﻿using System.Text.Json.Serialization;
+
+namespace MindSharper.Application.Common;
 
 public class PagedResult<T>
 {
@@ -8,6 +10,16 @@ public class PagedResult<T>
     public int ItemFrom { get; init; }
     public int ItemTo { get; init; }
 
+    [JsonConstructor]
+    public PagedResult(IEnumerable<T> results, int totalCount, int totalPages, int itemFrom, int itemTo)
+    {
+        Results = results;
+        TotalCount = totalCount;
+        TotalPages = totalPages;
+        ItemFrom = itemFrom;
+        ItemTo = itemTo;
+    }
+    
     public PagedResult(IEnumerable<T> results, int total, int pageNumber, int pageSize)
     {
         Results = results;

@@ -1,3 +1,4 @@
+using MindSharper.Presentation.UI.Auth;
 using MindSharper.Presentation.UI.Components;
 using MindSharper.Presentation.UI.Components.Pages;
 using MindSharper.Presentation.UI.Components.Pages.Decks;
@@ -10,6 +11,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<IDeckService, DeckService>();
+builder.Services.AddSingleton<IAuthService, AuthService>();
 
 var app = builder.Build();
 

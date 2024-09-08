@@ -1,6 +1,6 @@
 ﻿@inherits LayoutComponentBase
 
-<MudThemeProvider/>
+<MudThemeProvider @bind-IsDarkMode="_isDarkMode" @ref="@_mudThemeProvider"/>
 <MudPopoverProvider/>
 <MudDialogProvider/>
 <MudSnackbarProvider/>
@@ -8,24 +8,38 @@
 <MudLayout>
     <MudAppBar>
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => ToggleDrawer())" />
-        MindSharper App
+        <MudSwitch @bind-Value="_isDarkMode" Color="Color.Primary" Class="ma-4" T="bool" Label="Toggle Dark/Light Mode"/>
     </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen">
         <NavMenu/>
     </MudDrawer>
     <MudMainContent>
-        <a href="login"><span class="bi bi-door-open" aria-hidden="true" style="vertical-align:middle"></span>Login</a>
-        <a href="register"><span class="bi bi-pencil-square" aria-hidden="true" style="vertical-align:middle"></span>Register</a>
-        @* Logged in as @context.User.Identity?.Name. <a href="logout"><span class="bi bi-door-closed-fill" aria-hidden="true" style="vertical-align:middle"></span> Logout</a> *@
-        @Body
+        <MudContainer MaxWidth="MaxWidth.Large">
+            <a href="login"><span class="bi bi-door-open" aria-hidden="true" style="vertical-align:middle"></span>Login</a>
+            <a href="register"><span class="bi bi-pencil-square" aria-hidden="true" style="vertical-align:middle"></span>Register</a>
+            @* Logged in as @context.User.Identity?.Name. <a href="logout"><span class="bi bi-door-closed-fill" aria-hidden="true" style="vertical-align:middle"></span> Logout</a> *@
+            @Body
+        </MudContainer>
     </MudMainContent>
 </MudLayout>
 
 @code {
+    private readonly MudTheme _theme = new();
+    private MudThemeProvider _mudThemeProvider;
+    private bool _isDarkMode;
     private bool _drawerOpen = false;
     
     private void ToggleDrawer()
     {
         _drawerOpen = !_drawerOpen;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _isDarkMode = await _mudThemeProvider.GetSystemPreference();
+            StateHasChanged();
+        }
     }
 }

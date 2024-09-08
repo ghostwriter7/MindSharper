@@ -38,9 +38,12 @@ public class Program
         app.MapGroup("api/identity")
             .WithTags("Identity")
             .MapIdentityApi<User>();
+
         
         app.UseHttpsRedirection();
 
+        app.UseCors("corsPolicy");
+        
         app.UseAuthorization();
         
         app.MapControllers();

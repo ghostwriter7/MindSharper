@@ -8,9 +8,16 @@ public static class ServiceCollectionsExtensions
 {
     public static void AddPresentation(this WebApplicationBuilder builder)
     {
+        builder.Services.AddCors(options => options.AddPolicy(name: "corsPolicy", policy =>
+        {
+            policy.WithOrigins("http://localhost:5289")
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        }));
+        
         builder.Services.AddControllers();
         builder.Services.AddScoped<ErrorHandlingMiddleware>();
-
+        
         builder.Services.AddSwaggerGen(config =>
         {
             config.SwaggerDoc("v1", new OpenApiInfo { Title = "MindSharper API", Version = "v1" });

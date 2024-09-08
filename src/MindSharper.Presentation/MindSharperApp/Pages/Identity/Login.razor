@@ -1,0 +1,45 @@
+﻿@page "/login"
+@using MindSharperApp.Identity
+@inject IAccountManager AccountManager
+
+<PageTitle>Login</PageTitle>
+
+<h1>Login</h1>
+
+<AuthorizeView>
+    <Authorized>
+        <div>You're already logged in as @context.User.Identity?.Name</div>
+    </Authorized>
+    <NotAuthorized>
+        <div class="flex-outer">
+            <div>
+                <label for="email">
+                    Email:
+                </label>
+                <input required id="email" name="emailInput" placeholder="Enter your email address" type="email" @bind-value="email" />
+            </div>
+            <div>
+                <label for="password">
+                    Password:
+                </label>
+                <input required id="password" name="passwordInput" placeholder="Enter your password" type="password" @bind-value="password" />
+            </div>
+            <div>
+                <button class="btn btn-primary" @onclick="DoLoginAsync">Login</button>
+            </div>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+
+    private string email;
+    private string password;
+
+    private async Task DoLoginAsync()
+    {
+        var result = AccountManager.LoginAsync(email, password);
+        
+    }
+
+}

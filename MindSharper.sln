@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MindSharper.Presentation.AP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MindSharper.Presentation.UI", "src\MindSharper.Presentation\MindSharper.Presentation.UI\MindSharper.Presentation.UI.csproj", "{D20826B8-67D0-44DA-BA5D-34D3E3CFF707}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MindSharperApp", "src\MindSharper.Presentation\MindSharperApp\MindSharperApp.csproj", "{F44DA7EE-896E-461A-8E38-9B6E9B0DA577}"
+EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -148,6 +150,18 @@ Global
 		{D20826B8-67D0-44DA-BA5D-34D3E3CFF707}.Release|x64.Build.0 = Release|Any CPU
 		{D20826B8-67D0-44DA-BA5D-34D3E3CFF707}.Release|x86.ActiveCfg = Release|Any CPU
 		{D20826B8-67D0-44DA-BA5D-34D3E3CFF707}.Release|x86.Build.0 = Release|Any CPU
+		{F44DA7EE-896E-461A-8E38-9B6E9B0DA577}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F44DA7EE-896E-461A-8E38-9B6E9B0DA577}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F44DA7EE-896E-461A-8E38-9B6E9B0DA577}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F44DA7EE-896E-461A-8E38-9B6E9B0DA577}.Debug|x64.Build.0 = Debug|Any CPU
+		{F44DA7EE-896E-461A-8E38-9B6E9B0DA577}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F44DA7EE-896E-461A-8E38-9B6E9B0DA577}.Debug|x86.Build.0 = Debug|Any CPU
+		{F44DA7EE-896E-461A-8E38-9B6E9B0DA577}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F44DA7EE-896E-461A-8E38-9B6E9B0DA577}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F44DA7EE-896E-461A-8E38-9B6E9B0DA577}.Release|x64.ActiveCfg = Release|Any CPU
+		{F44DA7EE-896E-461A-8E38-9B6E9B0DA577}.Release|x64.Build.0 = Release|Any CPU
+		{F44DA7EE-896E-461A-8E38-9B6E9B0DA577}.Release|x86.ActiveCfg = Release|Any CPU
+		{F44DA7EE-896E-461A-8E38-9B6E9B0DA577}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B8872D13-B735-4C99-9A67-50BCE1CBC452} = {CA653ACD-C3A4-493D-B65E-C823CD3E7495}

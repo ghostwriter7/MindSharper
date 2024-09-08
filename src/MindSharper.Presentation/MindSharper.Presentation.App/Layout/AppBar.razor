@@ -1,0 +1,24 @@
+﻿@using MindSharper.Presentation.App.State
+@inject LayoutState LayoutState
+
+<MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => ToggleDrawer())" />
+<MudSwitch @bind-Value="LayoutState.IsDarkMode" Color="Color.Primary" Class="ma-4" T="bool" Label="Toggle Dark/Light Mode"/>
+
+@code {
+    [Parameter] public MudThemeProvider MudThemeProvider { get; set; }
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            LayoutState.IsDarkMode = await MudThemeProvider.GetSystemPreference();
+            StateHasChanged();
+        }
+    }
+
+    private void ToggleDrawer()
+    {
+        LayoutState.IsDrawerOpen = !LayoutState.IsDrawerOpen;
+    }
+
+}

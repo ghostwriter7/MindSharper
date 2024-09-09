@@ -54,11 +54,7 @@ public class TokenAuthenticationStateProvider(IHttpClientFactory httpClientFacto
         {
         }
         
-        var authenticationState = new AuthenticationState(user);
-        
-        NotifyAuthenticationStateChanged(Task.FromResult(authenticationState));
-        
-        return authenticationState;
+        return new AuthenticationState(user);
     }
     
 
@@ -73,10 +69,7 @@ public class TokenAuthenticationStateProvider(IHttpClientFactory httpClientFacto
             {
                 var content = await response.Content.ReadFromJsonAsync<AccessTokenResult>();
                 await jsRuntime.InvokeVoidAsync("localStorage.setItem", "accessToken", content.AccessToken);
-                Console.WriteLine($"Raising NotifyAuthStateChanged event");
-
                 NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
-
                 return new FormResult()
                 {
                     Succeeded = true

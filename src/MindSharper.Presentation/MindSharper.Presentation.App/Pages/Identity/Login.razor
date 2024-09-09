@@ -1,45 +1,50 @@
 ﻿@page "/login"
+@using System.ComponentModel.DataAnnotations
 @using MindSharper.Presentation.App.Identity
 @inject IAccountManager AccountManager
+@inject NavigationManager NavigationManager
 
 <PageTitle>Login</PageTitle>
-
-<h1>Login</h1>
 
 <AuthorizeView>
     <Authorized>
         <div>You're already logged in as @context.User.Identity?.Name</div>
     </Authorized>
     <NotAuthorized>
-        <div class="flex-outer">
-            <div>
-                <label for="email">
-                    Email:
-                </label>
-                <input required id="email" name="emailInput" placeholder="Enter your email address" type="email" @bind-value="email" />
-            </div>
-            <div>
-                <label for="password">
-                    Password:
-                </label>
-                <input required id="password" name="passwordInput" placeholder="Enter your password" type="password" @bind-value="password" />
-            </div>
-            <div>
-                <button class="btn btn-primary" @onclick="DoLoginAsync">Login</button>
-            </div>
-        </div>
+        <MudCard Class="ma-auto w-max">
+            <MudCardHeader Class="justify-center pt-6">
+                <MudText Typo="Typo.h4">Sign In</MudText>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudForm @ref="form" @bind-IsValid="isValid" @bind-Errors="errors">
+                    <MudTextField @bind-Value="email" T="string" Label="Email" Required="true" RequiredError="Emails is required."
+                                  Validation="@(new EmailAddressAttribute() { ErrorMessage = "The email address is invalid." })">
+                    </MudTextField>
+                    <MudTextField @bind-Value="password" T="string" Label="Password" InputType="InputType.Password" Required="true" RequiredError="Password is required."></MudTextField>
+                </MudForm>
+            </MudCardContent>
+            <MudCardActions Class="flex-column pa-6">
+                <MudText Class="d-block mb-3">Don't you have an account yet? <MudLink Href="/register">Register</MudLink></MudText>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!isValid)" @onclick="DoLoginAsync">Sign In</MudButton>
+            </MudCardActions>
+        </MudCard>
     </NotAuthorized>
 </AuthorizeView>
 
 @code {
-
+    private bool isValid;
+    private string[] errors;
+    private MudForm form;
     private string email;
     private string password;
 
     private async Task DoLoginAsync()
     {
-        var result = AccountManager.LoginAsync(email, password);
-        
+        var result = await AccountManager.LoginAsync(email, password);
+        if (result.Succeeded)
+        {
+            NavigationManager.NavigateTo("/home");
+        }
     }
 
 }

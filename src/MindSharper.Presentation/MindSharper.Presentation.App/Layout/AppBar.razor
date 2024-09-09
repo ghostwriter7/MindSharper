@@ -2,7 +2,13 @@
 @inject LayoutState LayoutState
 
 <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => ToggleDrawer())" />
-<MudSwitch @bind-Value="LayoutState.IsDarkMode" Color="Color.Primary" Class="ma-4" T="bool" Label="Toggle Dark/Light Mode"/>
+<MudToggleIconButton @bind-Toggled="LayoutState.IsDarkMode"
+                     Icon="@Icons.Material.Filled.LightMode"
+                     Class="ml-auto"
+                     Color="@Color.Default"
+                     ToggledIcon="@Icons.Material.Filled.DarkMode"
+                     ToggledColor="@Color.Default"
+/>
 
 @code {
     [Parameter] public MudThemeProvider MudThemeProvider { get; set; }

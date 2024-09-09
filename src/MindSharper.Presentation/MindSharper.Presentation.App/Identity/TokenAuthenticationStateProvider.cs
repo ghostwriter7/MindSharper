@@ -9,8 +9,6 @@ using AccessTokenResult = MindSharper.Presentation.App.Identity.Models.AccessTok
 
 namespace MindSharper.Presentation.App.Identity;
 
-using AccessTokenResult = Models.AccessTokenResult;
-
 public class TokenAuthenticationStateProvider(IHttpClientFactory httpClientFactory, IJSRuntime jsRuntime)
     : AuthenticationStateProvider, IAccountManager
 {
@@ -55,8 +53,12 @@ public class TokenAuthenticationStateProvider(IHttpClientFactory httpClientFacto
         catch
         {
         }
-
-        return new AuthenticationState(user);
+        
+        var authenticationState = new AuthenticationState(user);
+        
+        NotifyAuthenticationStateChanged(Task.FromResult(authenticationState));
+        
+        return authenticationState;
     }
     
 
@@ -71,7 +73,8 @@ public class TokenAuthenticationStateProvider(IHttpClientFactory httpClientFacto
             {
                 var content = await response.Content.ReadFromJsonAsync<AccessTokenResult>();
                 await jsRuntime.InvokeVoidAsync("localStorage.setItem", "accessToken", content.AccessToken);
-                
+                Console.WriteLine($"Raising NotifyAuthStateChanged event");
+
                 NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
 
                 return new FormResult()

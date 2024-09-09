@@ -5,7 +5,7 @@ namespace MindSharper.Presentation.App.State;
 
 public class LayoutState : INotifyPropertyChanged
 {
-    private bool _isDarkMode;
+    private bool _isDarkMode = true;
 
     public bool IsDarkMode
     {

@@ -1,6 +1,10 @@
-﻿@using MindSharper.Presentation.App.State
+﻿@using System.Text.Json
+@using System.Text.Json.Serialization
+@using MindSharper.Presentation.App.State
 @inherits LayoutComponentBase
 @inject LayoutState LayoutState
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <MudThemeProvider @bind-IsDarkMode="LayoutState.IsDarkMode" @ref="@_mudThemeProvider"/>
 <MudPopoverProvider/>
@@ -8,17 +12,20 @@
 <MudSnackbarProvider/>
 
 <MudLayout>
-    <MudAppBar>
-        <AppBar MudThemeProvider="@_mudThemeProvider" />
-    </MudAppBar>
-    <MudDrawer @bind-Open="LayoutState.IsDrawerOpen">
-        <NavMenu/>
-    </MudDrawer>
+    <AuthorizeView>
+        <Authorized>
+            <MudAppBar>
+                <AppBar MudThemeProvider="@_mudThemeProvider"/>
+            </MudAppBar>
+            <MudDrawer @bind-Open="LayoutState.IsDrawerOpen">
+                <NavMenu/>
+            </MudDrawer>
+        </Authorized>
+    </AuthorizeView>
     <MudMainContent>
         <MudContainer MaxWidth="MaxWidth.Large">
             <a href="login"><span class="bi bi-door-open" aria-hidden="true" style="vertical-align:middle"></span>Login</a>
             <a href="register"><span class="bi bi-pencil-square" aria-hidden="true" style="vertical-align:middle"></span>Register</a>
-            @* Logged in as @context.User.Identity?.Name. <a href="logout"><span class="bi bi-door-closed-fill" aria-hidden="true" style="vertical-align:middle"></span> Logout</a> *@
             @Body
         </MudContainer>
     </MudMainContent>
@@ -29,9 +36,17 @@
 
     protected override void OnInitialized()
     {
-        LayoutState.PropertyChanged += (sender, args) =>
+        AuthenticationStateProvider.AuthenticationStateChanged += async (Task<AuthenticationState> task) =>
         {
-            InvokeAsync(StateHasChanged);
+            var authenticationState = await task;
+            var isAuthenticated = authenticationState.User?.Identity?.IsAuthenticated ?? false;
+            if (!isAuthenticated)
+            {
+                NavigationManager.NavigateTo("/login");
+            }
         };
+
+        LayoutState.PropertyChanged += (sender, args) => { InvokeAsync(StateHasChanged); };
     }
+
 }

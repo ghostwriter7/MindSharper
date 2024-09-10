@@ -53,17 +53,17 @@ public class TokenAuthenticationStateProvider(IHttpClientFactory httpClientFacto
         catch
         {
         }
-        
+
         return new AuthenticationState(user);
     }
-    
+
 
     public async Task<FormResult> LoginAsync(string email, string password)
     {
         try
         {
             var response =
-                await _httpClient.PostAsJsonAsync("http://localhost:5273/api/identity/login", new { email, password });
+                await _httpClient.PostAsJsonAsync("api/identity/login", new { email, password });
 
             if (response.IsSuccessStatusCode)
             {
@@ -90,7 +90,23 @@ public class TokenAuthenticationStateProvider(IHttpClientFactory httpClientFacto
 
     public async Task<FormResult> RegisterAsync(string email, string password)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/identity/register", new { email, password });
+            if (response.IsSuccessStatusCode)
+            {
+                return new FormResult() { Succeeded = true };
+            }
+
+            var details = await response.Content.ReadAsStringAsync();
+            var parsedDetails = JsonDocument.Parse(details);
+        }
+        catch
+        {
+        }
+
+        return new FormResult()
+            { Succeeded = false, ErrorList = ["An unknown error prevented registration from succeeding."] };
     }
 
     public async Task<bool> CheckAuthenticatedState()

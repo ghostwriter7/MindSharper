@@ -1,0 +1,105 @@
+﻿@page "/register"
+@using System.ComponentModel.DataAnnotations
+@using System.Text.RegularExpressions
+@using MindSharper.Presentation.App.Identity
+@inject IAccountManager AccountManager
+@inject NavigationManager NavigationManager
+
+<PageTitle>Register</PageTitle>
+
+<AuthorizeView>
+    <Authorized>
+        <div>You're already logged in as @context.User.Identity?.Name</div>
+    </Authorized>
+    <NotAuthorized>
+        <MudCard Class="ma-auto w-max">
+            <MudCardHeader Class="justify-center pt-6">
+                <MudText Typo="Typo.h4">Sign up</MudText>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudForm @ref="form" @bind-IsValid="isValid" @bind-Errors="errors">
+                    <MudTextField
+                        Class="mb-3"
+                        T="string"
+                        Label="Email"
+                        @ref="emailField"
+                        Required="true"
+                        RequiredError="E-mail address is required"
+                        Validation="@(new EmailAddressAttribute() { ErrorMessage = "E-mail address is not valid" })">
+                    </MudTextField>
+                    <MudTextField
+                        T="string"
+                        Class="mb-3"
+                        Label="Password"
+                        InputType="InputType.Password"
+                        @ref="passwordField"
+                        Required="true"
+                        RequiredError="Password is required"
+                        Validation="@(new Func<string, IEnumerable<string>>(ValidatePasswordStrength))">
+                    </MudTextField>
+                    <MudTextField
+                        T="string"
+                        Class="mb-3"
+                        Label="Repeat password"
+                        InputType="InputType.Password"
+                        @ref="repeatPasswordField"
+                        Required="true"
+                        RequiredError="You need to repeat the password"
+                        Validation="@(new Func<string, string>(ValidatePasswordsMatch))">
+                    </MudTextField>
+                </MudForm>
+            </MudCardContent>
+            <MudCardActions Class="flex-column pa-6">
+                <MudText Class="d-block mb-3">Do you have an account already? <MudLink Href="/login">Click to Login</MudLink></MudText>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!isValid)" @onclick="DoSignUpAsync">Sign Up</MudButton>
+            </MudCardActions>
+        </MudCard>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private bool isValid;
+    private string[] errors;
+    private MudForm form;
+    private MudTextField<string> emailField;
+    private MudTextField<string> passwordField;
+    private MudTextField<string> repeatPasswordField;
+
+    private async Task DoSignUpAsync()
+    {
+        var email = emailField.Value;
+        var password = passwordField.Value;
+
+        if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+            return;
+
+        var result = await AccountManager.RegisterAsync(email, password);
+        if (result.Succeeded)
+        {
+            NavigationManager.NavigateTo("/home");
+        }
+    }
+    
+    private IEnumerable<string> ValidatePasswordStrength(string password)
+    {
+        if (string.IsNullOrWhiteSpace(password))
+        {
+            yield return "Password cannot be blank!";
+            yield break;
+        }
+
+        if (password.Length < 6)
+            yield return "Password needs to be at least of length 6!";
+        if (!Regex.IsMatch(password, @"[A-Z]"))
+            yield return "Passwords must contain at least one uppercase letter";
+        if (!Regex.IsMatch(password, @"[0-9]"))
+            yield return "Passwords must contain at least one digit";
+        if (!Regex.IsMatch(password, @"[a-z]"))
+            yield return "Password must contain at least one lowercase letter";
+    }
+
+    private string? ValidatePasswordsMatch(string password)
+    {
+        return passwordField.Value != repeatPasswordField.Value ? "Passwords don't match!" : null;
+    }
+}

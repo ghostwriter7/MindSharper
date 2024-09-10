@@ -17,14 +17,28 @@
             </MudCardHeader>
             <MudCardContent>
                 <MudForm @ref="form" @bind-IsValid="isValid" @bind-Errors="errors">
-                    <MudTextField @bind-Value="email" T="string" Label="Email" Required="true" RequiredError="Emails is required."
-                                  Validation="@(new EmailAddressAttribute() { ErrorMessage = "The email address is invalid." })">
+                    <MudTextField
+                        Class="mb-3"
+                        @bind-Value="email" 
+                        T="string"
+                        Label="Email"
+                        Required="true"
+                        RequiredError="Emails is required."
+                        Validation="@(new EmailAddressAttribute() { ErrorMessage = "The email address is invalid." })">
                     </MudTextField>
-                    <MudTextField @bind-Value="password" T="string" Label="Password" InputType="InputType.Password" Required="true" RequiredError="Password is required."></MudTextField>
+                    <MudTextField
+                        Class="mb-3"
+                        @bind-Value="password"
+                        T="string"
+                        Label="Password"
+                        InputType="InputType.Password"
+                        Required="true"
+                        RequiredError="Password is required.">
+                    </MudTextField>
                 </MudForm>
             </MudCardContent>
             <MudCardActions Class="flex-column pa-6">
-                <MudText Class="d-block mb-3">Don't you have an account yet? <MudLink Href="/register">Register</MudLink></MudText>
+                <MudText Class="d-block mb-3">Don't you have an account yet? <MudLink Href="/register">Click to Register</MudLink></MudText>
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!isValid)" @onclick="DoLoginAsync">Sign In</MudButton>
             </MudCardActions>
         </MudCard>
